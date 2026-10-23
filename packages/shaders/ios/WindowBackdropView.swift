@@ -173,8 +173,8 @@ struct ThemeGradient: Equatable {
   var isEmpty: Bool { colors.isEmpty }
 
   static func parse(_ flat: [Double]) -> [SIMD4<Float>] {
-    stride(from: 0, to: flat.count - 3, by: 4).prefix(3).map {
-      SIMD4(Float(flat[$0]), Float(flat[$0 + 1]), Float(flat[$0 + 2]), Float(flat[$0 + 3]))
+    stride(from: 0, to: flat.count - 3, by: 4).prefix(3).map { (i: Int) -> SIMD4<Float> in
+      SIMD4<Float>(Float(flat[i]), Float(flat[i + 1]), Float(flat[i + 2]), Float(flat[i + 3]))
     }
   }
 

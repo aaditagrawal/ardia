@@ -491,6 +491,7 @@ try {
           await run(`globalThis.acTabDrag.setState({ windowId: null, tabIds: [] }); return settle(300);`);
         }
         assert.equal(await edge({ x: width / 2, y: 400 }), false, `${side}: leaving after the drag hides it`);
+        assert.equal(await edge(at(120)), false, `${side}: hidden, 120 inside the edge is past the strip`);
         const stale = await run(`const S = globalThis.expo.modules.ArdiaShell; if (typeof S.emit !== "function") return null;
           const peeks = () => !!globalThis.acLayout.peek.w1?.live;
           const send = (over, right) => S.emit("onWindowEvent", { type: "leftEdge", id: "w1", over, right, point: [0, 300] });

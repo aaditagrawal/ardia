@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "apps/browser/scripts/tab-drag-test.mjs",
-      "blob": "314c83b54474cca8aef2c11bcab13b2b00733c41",
+      "blob": "5d9ebe81abbb44e97aacac3300ec102f9c583017",
       "executable": false
     },
     {
@@ -68,6 +68,11 @@
       "executable": false
     },
     {
+      "path": "packages/shaders/ios/WindowBackdropView.swift",
+      "blob": "22c0a3301f377d30970e6a011785320ca605c7d6",
+      "executable": false
+    },
+    {
       "path": "packages/shell/ios/AppModule.swift",
       "blob": "bae5e5ab073d5e53a7c388b7d96a18645236a277",
       "executable": false
@@ -99,5 +104,10 @@
     }
   ],
   "indexSHA256": "c27634e3ba6f163a6fa2368771acf30a146982f524b20fdb66c9f95b83be99c1",
-  "fingerprint": "f4ee2cfcee8c622ada8eb13bbe25fb3adec761b4aa0459be9d91cdabdc6f0650"
+  "fingerprint": "b08a4992a3ad6dbbd06b09cb878c54a25e336cf2155a56068a128441aaeb238d",
+  "previousSupportGitSHA": "01f337de98a7aa967b5f935c1693a1007ad6738a",
+  "amendedSourcePaths": [
+    "apps/browser/scripts/tab-drag-test.mjs",
+    "packages/shaders/ios/WindowBackdropView.swift"
+  ]
 }
