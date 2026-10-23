@@ -110,7 +110,12 @@ export ARDIA_CI_PHASE=package
 [[ -s "$app/Contents/Resources/main.jsbundle" ]]
 bun "$here/pr91-native-manifest.mjs" --bundle "$derived/Build/Products/Debug/main.jsbundle"
 shasum -a 256 "$app/Contents/Resources/main.jsbundle" > "$out/main.jsbundle.sha256"
-LC_ALL=C /usr/bin/strings -a "$app/Contents/MacOS/Ardia" | \
+debug_code="$app/Contents/MacOS/Ardia"
+if [[ -f "$app/Contents/MacOS/Ardia.debug.dylib" ]]; then
+  debug_code="$app/Contents/MacOS/Ardia.debug.dylib"
+fi
+printf '%s\n' "${debug_code#"$app"/}" > "$out/debug-code-image.txt"
+LC_ALL=C /usr/bin/strings -a "$debug_code" | \
   awk '/devLeftEdgePointer/ { pointer = 1 } /devLeftEdgeStats/ { stats = 1 } END { print "devLeftEdgePointer=" pointer + 0; print "devLeftEdgeStats=" stats + 0; exit !(pointer && stats) }' \
   > "$out/debug-hooks.txt"
 codesign -dvv "$app" > "$out/codesign-details.txt" 2>&1
