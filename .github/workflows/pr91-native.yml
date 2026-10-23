@@ -20,7 +20,6 @@ jobs:
       CI: 'true'
       FORCE_BUNDLING: '1'
       RCT_NEW_ARCH_ENABLED: '0'
-      ARDIA_CI_OUTPUT: ${{ runner.temp }}/ardia-pr91-native-ci
     steps:
       - name: Check out verification snapshot
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -36,13 +35,15 @@ jobs:
           no-cache: true
       - name: Build bundled native Debug app
         timeout-minutes: 55
+        env:
+          ARDIA_CI_OUTPUT: ${{ runner.temp }}/ardia-pr91-native-ci
         run: bash .github/scripts/pr91-native-build.sh
       - name: Preserve app, provenance and logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: ardia-pr91-native-debug-${{ github.sha }}
-          path: ${{ env.ARDIA_CI_OUTPUT }}/
+          path: ${{ runner.temp }}/ardia-pr91-native-ci/
           if-no-files-found: warn
           retention-days: 3
           compression-level: 0
