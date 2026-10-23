@@ -129,5 +129,7 @@ COPYFILE_DISABLE=1 tar -czf "$out/Ardia-pr91-native-Debug.tar.gz" \
 shasum -a 256 "$out/Ardia-pr91-native-Debug.tar.gz" > "$out/Ardia-pr91-native-Debug.tar.gz.sha256"
 git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
 bun "$here/pr91-native-manifest.mjs" --pod-lock
-[[ "$ARDIA_CI_CODESIGN_EXIT" == 0 ]]
+if [[ "$ARDIA_CI_CODESIGN_EXIT" != 0 ]]; then
+  exit 1
+fi
 export ARDIA_CI_PHASE=complete

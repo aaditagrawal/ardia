@@ -104,4 +104,5 @@ if (process.argv.includes('--relocate-pod-lock')) {
     applicationLaunched: false
   };
   writeFileSync(join(out, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+  if (manifest.exitCode === 0 && manifest.phase === 'complete' && manifest.codesignVerification.exitCode !== 0) throw new Error('Completed build has failed signature verification');
 }
