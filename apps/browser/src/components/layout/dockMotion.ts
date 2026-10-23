@@ -32,9 +32,9 @@ export const PEEK_ORIGIN: readonly [number, number] = [5, 5];
 export const PEEK_BOTTOM = 5;
 export const PEEK_RADIUS = 12;
 
-export function lightsCenter(offset: number, down = 0, base: readonly [number, number] = LIGHTS_CENTER, rightOf?: number): [number, number] | null {
+export function lightsCenter(offset: number, down = 0, base: readonly [number, number] = LIGHTS_CENTER, fromRight = false): [number, number] | null {
   const dx = Math.round(offset * 2) / 2;
-  if (rightOf !== undefined) return [rightOf + dx - base[0] - (HEADER_TOOLS.lightsRight - HEADER_TOOLS.edge - LIGHTS_CENTER[0]), base[1] + down];
+  if (fromRight) return [dx - base[0] - (HEADER_TOOLS.lightsRight - HEADER_TOOLS.edge - LIGHTS_CENTER[0]), base[1] + down];
   return dx === 0 && down === 0 && base === LIGHTS_CENTER ? null : [base[0] - dx, base[1] + down];
 }
 

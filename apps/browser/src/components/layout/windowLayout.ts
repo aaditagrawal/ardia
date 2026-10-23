@@ -37,7 +37,7 @@ export function openingLightsCenter(s: BrowserState, windowId: string): [number,
   if (!w) return null;
   const open = w.sidebarOpen ?? true;
   if ((w.tabLayout ?? s.settings.tabLayout) === "top") return open ? [...TOP_STRIP_LIGHTS_CENTER] : lightsCenter(layout.sidebarWidth);
-  return lightsCenter(open ? 0 : (s.settings.sidebarWidth ?? layout.sidebarWidth), 0, s.settings.addressBar === "sidebar" ? ARC_LIGHTS_CENTER : LIGHTS_CENTER, sidebarOnRight(s, windowId) ? w.frame?.[2] : undefined);
+  return lightsCenter(open ? 0 : (s.settings.sidebarWidth ?? layout.sidebarWidth), 0, s.settings.addressBar === "sidebar" ? ARC_LIGHTS_CENTER : LIGHTS_CENTER, sidebarOnRight(s, windowId));
 }
 
 export const SIDEBAR_FIELD = { top: 46, height: layout.rowHeight, radius: 10 } as const;

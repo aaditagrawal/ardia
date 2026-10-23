@@ -1,0 +1,48 @@
+name: PR91 native Debug verification
+
+on:
+  push:
+    branches:
+      - verify/right-sidebar-native
+
+permissions:
+  contents: read
+
+jobs:
+  native-debug:
+    if: github.repository == 'aaditagrawal/ardia'
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI: 'true'
+      FORCE_BUNDLING: '1'
+      RCT_NEW_ARCH_ENABLED: '0'
+      ARDIA_CI_OUTPUT: ${{ runner.temp }}/ardia-pr91-native-ci
+    steps:
+      - name: Check out verification snapshot
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: aaditagrawal/ardia
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Set up Bun 1.4.4
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: '1.4.4'
+          no-cache: true
+      - name: Build bundled native Debug app
+        timeout-minutes: 55
+        run: bash .github/scripts/pr91-native-build.sh
+      - name: Preserve app, provenance and logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ardia-pr91-native-debug-${{ github.sha }}
+          path: ${{ env.ARDIA_CI_OUTPUT }}/
+          if-no-files-found: warn
+          retention-days: 3
+          compression-level: 0

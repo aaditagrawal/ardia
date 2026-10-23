@@ -1,0 +1,103 @@
+{
+  "baseGitSHA": "23532ae5c13dd763b28a852e335490942605097f",
+  "sourceBranch": "feat/right-sidebar",
+  "files": [
+    {
+      "path": "apps/browser/scripts/tab-drag-test.mjs",
+      "blob": "314c83b54474cca8aef2c11bcab13b2b00733c41",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/scripts/windowing-test.mjs",
+      "blob": "b4fd3974702170083200d39ef69e4333cea5949d",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/components/layout/SidebarDock.tsx",
+      "blob": "54ca229ee36c068b151a41b240000aa16875fc98",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/components/layout/dockMotion.test.mjs",
+      "blob": "878888278a3bd3a1c1f94771f2d9885d1e5aa1b6",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/components/layout/dockMotion.ts",
+      "blob": "75f623f7595ab1e2b3dea8e0e67cc9894c999db9",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/components/layout/windowLayout.ts",
+      "blob": "ee3421ac996853cfb0d6784c58531eeb5aab8749",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/lib/native.ts",
+      "blob": "214090df49d48b2fea980fcaca25b0c174c89859",
+      "executable": false
+    },
+    {
+      "path": "apps/browser/src/nativeApi.tsx",
+      "blob": "3c9d85ac8f09736651bdbcf1bf479373191916f3",
+      "executable": false
+    },
+    {
+      "path": "apps/demo/src/shims/web/motion/leftEdge.ts",
+      "blob": "9215f19f352823f80ea88e41fab8cd1b1a3e7e4d",
+      "executable": false
+    },
+    {
+      "path": "apps/demo/src/shims/web/windowChrome.tsx",
+      "blob": "e13b29bb7182d219b296cdc1ab7b3f7a716ba92c",
+      "executable": false
+    },
+    {
+      "path": "packages/ardiacore/ios/ACChromeWindow.h",
+      "blob": "87946f4ae6778d0eeb1805148e97c9d87c192499",
+      "executable": false
+    },
+    {
+      "path": "packages/ardiacore/ios/ArdiaCoreChromeWindow.mm",
+      "blob": "d15f92286a50d80491a8bb9dbe996e1c95ced39c",
+      "executable": false
+    },
+    {
+      "path": "packages/ardiacore/ios/ArdiaCoreEarlyWindow.mm",
+      "blob": "b00af3b7257cb717dba0100ad80251990595e03a",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/ios/AppModule.swift",
+      "blob": "bae5e5ab073d5e53a7c388b7d96a18645236a277",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/ios/ChromeWindows.swift",
+      "blob": "f770a3e545394d18c66c8f161461aa12cf445680",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/ios/LeftEdge.swift",
+      "blob": "f0baca74a9a2c2e027cb80bce13c9b2f683fbc92",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/ios/ShellModule.swift",
+      "blob": "d797ab3cf4fcf7fa5c2e1a257fb3e50dc6509eef",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/ios/Windows.swift",
+      "blob": "96ec9d97b78cbe0bde7639b2e6f10ea0d29b1248",
+      "executable": false
+    },
+    {
+      "path": "packages/shell/src/index.tsx",
+      "blob": "cac643019e21ec7297fbd486424e4c7a87c6ee65",
+      "executable": false
+    }
+  ],
+  "indexSHA256": "c27634e3ba6f163a6fa2368771acf30a146982f524b20fdb66c9f95b83be99c1",
+  "fingerprint": "f4ee2cfcee8c622ada8eb13bbe25fb3adec761b4aa0459be9d91cdabdc6f0650"
+}

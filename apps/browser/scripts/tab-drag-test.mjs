@@ -9,12 +9,13 @@ import { launch, reporter, session, sleep } from "../../../scripts/lib/instance.
 const args = process.argv.slice(2);
 const appArg = args.find((a) => !a.startsWith("--"));
 if (!appArg) {
-  console.error("usage: node tab-drag-test.mjs <Debug Ardia.app> [--port=<DevTools port>] [--keep-data]");
+  console.error("usage: node tab-drag-test.mjs <Debug Ardia.app> [--port=<DevTools port>] [--keep-data] [--js=none|pinned|live]");
   process.exit(2);
 }
 const appPath = resolve(appArg);
 const port = args.find((a) => a.startsWith("--port="))?.slice(7);
 const keep = args.includes("--keep-data");
+const js = args.find((a) => a.startsWith("--js="))?.slice(5);
 const scratch = mkdtempSync(join(tmpdir(), "ac-tab-drag-"));
 const data = join(scratch, "data");
 const rep = reporter(join(scratch, "tab-drag-test.log"), { name: "tab-drag-test" });
@@ -101,7 +102,7 @@ function contrast(png, windowWidth, [x0, y0, x1, y1]) {
 const check = (name, fn) => rep.check(name, fn);
 
 try {
-  app = await launch(appPath, { data, port, session: fixture() });
+  app = await launch(appPath, { data, port, session: fixture(), ...(js ? { js } : {}) });
   rep.log(`instance: pid ${app.pid}, DevTools port ${app.port}, data ${data}`);
   await sleep(1500);
   await run(`return act("w1", "windowDrags");`);
@@ -464,6 +465,45 @@ try {
       assert.equal(await edge({ x: 800, y: 400 }), false, "it hides once the pointer leaves");
     } finally {
       await run(`return ac.shell.devLeftEdgePointer("w1", null).then(() => { if (!st().windows.w1.sidebarOpen) st().toggleSidebar("w1"); return settle(900); });`);
+    }
+  });
+
+  await check("sidebar auto-hidden on either side: past that edge peeks, its hold keeps it, leaving hides it, a tab drag peeks from the strip inside it, a stale side's event is ignored, and the watch ends once docked", async () => {
+    const edge = (p) => run(`return ac.shell.devLeftEdgePointer("w1", ${JSON.stringify(p)}).then(() => settle(500)).then(() => !!globalThis.acLayout.peek.w1?.live);`);
+    const width = await run(`return st().windows.w1.frame[2];`);
+    await run(`for (const v of Object.values(st().splits)) st().separateSplit(v.id); if (st().windows.w1.sidebarOpen) st().toggleSidebar("w1"); return settle(900);`);
+    try {
+      for (const side of ["left", "right"]) {
+        await run(`st().updateSettings({ sidebarSide: "${side}" }); return settle(900);`);
+        const right = side === "right";
+        const at = (fromEdge) => ({ x: right ? width - fromEdge : fromEdge, y: 300 });
+        await edge({ x: width / 2, y: 400 });
+        assert.equal(await edge(at(-30)), false, `${side}: 30 past the edge is out of reach`);
+        assert.equal(await edge(at(-4)), true, `${side}: just past the edge peeks`);
+        assert.equal(await edge(at(120)), true, `${side}: the hold over the peeking sidebar keeps it`);
+        assert.equal(await edge({ x: width / 2, y: 400 }), false, `${side}: leaving hides it`);
+        assert.equal(await edge({ x: right ? -4 : width + 4, y: 300 }), false, `${side}: the other edge doesn't peek it`);
+        await run(`globalThis.acTabDrag.setState({ windowId: "w1", tabIds: ["t1"] }); return settle(300);`);
+        try {
+          assert.equal(await edge(at(20)), false, `${side}: dragging a tab, 20 inside the edge is past the strip`);
+          assert.equal(await edge(at(4)), true, `${side}: dragging a tab into the strip inside the edge peeks`);
+        } finally {
+          await run(`globalThis.acTabDrag.setState({ windowId: null, tabIds: [] }); return settle(300);`);
+        }
+        assert.equal(await edge({ x: width / 2, y: 400 }), false, `${side}: leaving after the drag hides it`);
+        const stale = await run(`const S = globalThis.expo.modules.ArdiaShell; if (typeof S.emit !== "function") return null;
+          const peeks = () => !!globalThis.acLayout.peek.w1?.live;
+          const send = (over, right) => S.emit("onWindowEvent", { type: "leftEdge", id: "w1", over, right, point: [0, 300] });
+          send(true, ${!right}); return settle(500).then(() => { const ignored = !peeks(); send(true, ${right}); return settle(500).then(() => { const taken = peeks(); send(false, ${right}); return settle(500).then(() => ({ ignored, taken, hidden: !peeks() })); }); });`);
+        if (stale) assert.deepEqual(stale, { ignored: true, taken: true, hidden: true }, `${side}: an event for the other side is ignored, its own isn't`);
+        else rep.log("(no JS emit on ArdiaShell: the stale-side event case wasn't run)");
+        await edge({ x: width / 2, y: 400 });
+      }
+      const stats = await run(`return ac.shell.devLeftEdgePointer("w1", null).then(() => { st().toggleSidebar("w1"); return settle(900); }).then(() => ac.shell.devLeftEdgeStats());`);
+      assert.equal(stats.watched, 0, `docked: nothing watched (${JSON.stringify(stats)})`);
+      assert.equal(stats.global || stats.local, false, `docked: no monitors left (${JSON.stringify(stats)})`);
+    } finally {
+      await run(`st().updateSettings({ sidebarSide: "left" }); return ac.shell.devLeftEdgePointer("w1", null).then(() => { if (!st().windows.w1.sidebarOpen) st().toggleSidebar("w1"); return settle(900); });`);
     }
   });
 
