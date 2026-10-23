@@ -45,6 +45,11 @@ try {
   demand(manifest.registeredHookNamesInBinary === 'devLeftEdgePointer=1\ndevLeftEdgeStats=1', 'Native hook probe did not pass');
   demand(text(join(input, 'build-wrapper.log')).includes('BUILD SUCCEEDED'), 'Input native build did not succeed');
   demand(manifest.codesignVerification.exitCode === 1 && manifest.codesignVerification.result.includes('In subcomponent: ') && manifest.codesignVerification.result.includes('/Sparkle.framework'), 'Input signature failure is not the known embedded Sparkle failure');
+  try {
+    execFileSync('git', ['cat-file', '-e', compiledSHA + '^{commit}'], { stdio: 'pipe' });
+  } catch {
+    execFileSync('git', ['fetch', '--no-tags', '--depth=1', 'origin', compiledSHA], { stdio: 'pipe' });
+  }
   execFileSync('git', ['diff', '--exit-code', compiledSHA, 'HEAD', '--', 'apps', 'packages', 'engine'], { stdio: 'pipe' });
   for (const file of manifest.sourceSnapshot.files) demand(git('rev-parse', 'HEAD:' + file.path) === file.blob, 'Feature source changed: ' + file.path);
   demand(git('rev-parse', 'HEAD:engine') === manifest.engine.tree, 'Engine tree changed');
