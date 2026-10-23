@@ -32,8 +32,9 @@ export const PEEK_ORIGIN: readonly [number, number] = [5, 5];
 export const PEEK_BOTTOM = 5;
 export const PEEK_RADIUS = 12;
 
-export function lightsCenter(offset: number, down = 0, base: readonly [number, number] = LIGHTS_CENTER): [number, number] | null {
+export function lightsCenter(offset: number, down = 0, base: readonly [number, number] = LIGHTS_CENTER, rightOf?: number): [number, number] | null {
   const dx = Math.round(offset * 2) / 2;
+  if (rightOf !== undefined) return [rightOf + dx - base[0] - (HEADER_TOOLS.lightsRight - HEADER_TOOLS.edge - LIGHTS_CENTER[0]), base[1] + down];
   return dx === 0 && down === 0 && base === LIGHTS_CENTER ? null : [base[0] - dx, base[1] + down];
 }
 
@@ -53,10 +54,10 @@ export function setDockMoving(windowId: string, moving: boolean) {
   });
 }
 
-const peeking = new Map<string, number>();
-export const setPeekShown = (windowId: string, shown: boolean, rightEdge = 0) => void (shown ? peeking.set(windowId, rightEdge) : peeking.delete(windowId));
+const peeking = new Map<string, [number, number]>();
+export const setPeekShown = (windowId: string, shown: boolean, rightEdge = 0, leftEdge = -Infinity) => void (shown ? peeking.set(windowId, [leftEdge, rightEdge]) : peeking.delete(windowId));
 export const peekShown = (windowId: string) => peeking.has(windowId);
-export const overPeek = (windowId: string, x: number) => x < (peeking.get(windowId) ?? -Infinity);
+export const overPeek = (windowId: string, x: number) => x >= (peeking.get(windowId)?.[0] ?? Infinity) && x < (peeking.get(windowId)?.[1] ?? -Infinity);
 export const devPeeks: Record<string, { show(): void; hide(): void }> = {};
 
 export const HEADER_TOOLS = { toggleX: 70.75 + 27, pitch: 35, edge: 7, lightsRight: 70.75 + 7 } as const;

@@ -10,7 +10,7 @@ import { activeTabId } from "../store/model";
 import { downloadsIn } from "../store/ui";
 import { cleanedTabsFor, cleanUpCandidates } from "../store/organize";
 import { openNewTabInSplit } from "./layout/splitActions";
-import { listTopGap, SIDEBAR_FIELD, SIDEBAR_FOOTER_DOWNLOADS, SIDEBAR_HEADER_WITH_FIELD, useAddressBarInSidebar } from "./layout/windowLayout";
+import { listTopGap, SIDEBAR_FIELD, SIDEBAR_FOOTER_DOWNLOADS, SIDEBAR_HEADER_WITH_FIELD, useAddressBarInSidebar, useSidebarOnRight } from "./layout/windowLayout";
 import { SIDEBAR_PLAYER_HEIGHT, SidebarPlayer, useSidebarPlayerTab } from "./media/SidebarPlayer";
 import { HoverSlot } from "./HoverSlot";
 import { IconButton, useHover } from "./primitives";
@@ -67,6 +67,7 @@ export function Sidebar({ width }: { width: number }) {
   const playerTab = useSidebarPlayerTab(windowId);
   const playerHeight = playerTab ? SIDEBAR_PLAYER_HEIGHT : 0;
   const addressBar = useAddressBarInSidebar();
+  const right = useSidebarOnRight();
   const header = addressBar ? SIDEBAR_HEADER_WITH_FIELD : layout.sidebarHeader;
   const glowRoom = addressBar ? 0 : GLOW_ROOM;
   const hasDownloads = useBrowser((s) => downloadsIn(s, windowId).length > 0);
@@ -141,7 +142,7 @@ export function Sidebar({ width }: { width: number }) {
             <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: footer }}>
               {dots ? <ProfileDots windowId={windowId} /> : null}
               {footerDownloads ? (
-                <View style={{ position: "absolute", left: layout.sidebarInset, bottom: SIDEBAR_FOOTER_DOWNLOADS.bottom }}>
+                <View style={{ position: "absolute", [right ? "right" : "left"]: layout.sidebarInset, bottom: SIDEBAR_FOOTER_DOWNLOADS.bottom }}>
                   <DownloadsButton windowId={windowId} />
                 </View>
               ) : null}
@@ -153,10 +154,10 @@ export function Sidebar({ width }: { width: number }) {
             {addressBar ? (
               <>
                 <SidebarHeaderTools width={width} />
-                <SidebarAddressRow width={width} />
+                <SidebarAddressRow key={right ? "right" : "left"} width={width} />
               </>
             ) : (
-              <View pointerEvents="box-none" style={{ height: layout.sidebarHeader, flexDirection: "row", alignItems: "flex-start", paddingLeft: PROFILE_INDICATOR_X, paddingRight: 7, paddingTop: 27 - 17 }}>
+              <View pointerEvents="box-none" style={{ height: layout.sidebarHeader, flexDirection: right ? "row-reverse" : "row", alignItems: "flex-start", paddingLeft: right ? 7 : PROFILE_INDICATOR_X, paddingRight: right ? PROFILE_INDICATOR_X : 7, paddingTop: 27 - 17 }}>
                 <ProfileIndicator room={width - PROFILE_INDICATOR_X - 7 - (hasDownloads ? 34 + 2 : 0)} />
                 <View pointerEvents="none" style={{ flex: 1 }} />
                 {hasDownloads ? <DownloadsButton windowId={windowId} /> : null}

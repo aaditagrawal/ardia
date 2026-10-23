@@ -217,6 +217,26 @@ test("the peek panel covers the page up to its right edge, only while it's out",
   assert.equal(dm.overPeek("w1", 120), false);
 });
 
+test("a right-hand peek panel covers the page from its left edge to the window's edge", () => {
+  dm.setPeekShown("w1", true, Infinity, 1000 - 5 - 240);
+  assert.equal(dm.overPeek("w1", 754), false);
+  assert.equal(dm.overPeek("w1", 755), true);
+  assert.equal(dm.overPeek("w1", 999), true);
+  dm.setPeekShown("w1", false);
+  assert.equal(dm.overPeek("w1", 999), false);
+});
+
+test("on the right the lights sit in the window's top-right corner, mirrored, and leave with the sidebar", () => {
+  const { lightsRight, edge } = dm.HEADER_TOOLS;
+  const [close] = dm.lightsCenter(0, 0, dm.LIGHTS_CENTER, 1000);
+  assert.equal(close, 1000 - (lightsRight - edge), "close button centre: as far in from the right as the zoom button is from the left");
+  assert.equal(close + (lightsRight - edge - 25), 1000 - 25, "zoom button centre: 25 in from the right, as the close button is from the left");
+  assert.equal(1000 - (close - edge), lightsRight, "same outer inset as the left group");
+  assert.deepEqual(dm.lightsCenter(0, 0, dm.ARC_LIGHTS_CENTER, 1000), [close, 24], "Arc's row keeps its height");
+  assert.deepEqual(dm.lightsCenter(190, 0, dm.LIGHTS_CENTER, 1000), [close + 190, 27], "hidden: out past the right edge with the sidebar");
+  assert.deepEqual(dm.lightsCenter(-5, 5, dm.LIGHTS_CENTER, 1000), [close - 5, 32], "in the peek panel: in by the panel's inset and down");
+});
+
 test("Arc's layout keeps the address bar in a hidden sidebar (no toolbar on the card); Dia's layout and the switch off don't", async () => {
   const { addressBarInSidebar } = await import("./windowLayout.ts");
   const { reloadSwitches } = await import("../../lib/killSwitches.ts");
@@ -238,4 +258,13 @@ test("Arc's layout keeps the address bar in a hidden sidebar (no toolbar on the 
   assert.equal(addressBarInSidebar(S(), w), true, "switch off, shown: in the sidebar");
   stub.docs.clear();
   reloadSwitches();
+});
+
+test("the sidebar is on the right only in a window whose tabs are in the sidebar", async () => {
+  const { sidebarOnRight } = await import("./windowLayout.ts");
+  const state = (sidebarSide, tabLayout, own) => ({ settings: { sidebarSide, tabLayout }, windows: { w1: own ? { tabLayout: own } : {} } });
+  assert.equal(sidebarOnRight(state("right", "sidebar"), "w1"), true);
+  assert.equal(sidebarOnRight(state("right", "sidebar", "top"), "w1"), false, "a window switched to top tabs places its popups as the left layout does");
+  assert.equal(sidebarOnRight(state("right", "top", "sidebar"), "w1"), true, "a window switched back to the sidebar follows the setting");
+  assert.equal(sidebarOnRight(state("left", "sidebar"), "w1"), false);
 });
