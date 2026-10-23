@@ -63,10 +63,18 @@ scripts/agent/locked pod --wait 120 -- \
   2>&1 | tee "$out/dependencies.log"
 
 export ARDIA_CI_PHASE=pods
-scripts/agent/locked pod --wait 120 -- \
+if scripts/agent/locked pod --wait 120 -- \
   sh -c 'cd apps/browser/macos && pod install --deployment' \
-  2>&1 | tee "$out/pods.log"
-git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml apps/browser/macos/Podfile.lock
+  2>&1 | tee "$out/pods.log"; then
+  :
+else
+  bun "$here/pr91-native-manifest.mjs" --relocate-pod-lock
+  scripts/agent/locked pod --wait 120 -- \
+    sh -c 'cd apps/browser/macos && pod install --deployment' \
+    2>&1 | tee "$out/pods-retry.log"
+fi
+git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
+bun "$here/pr91-native-manifest.mjs" --pod-lock
 
 export ARDIA_CI_PHASE=engine
 export ARDIACORE_PREBUILT_REPO=mantrakp04/ardia
@@ -109,6 +117,7 @@ fi
 COPYFILE_DISABLE=1 tar -czf "$out/Ardia-pr91-native-Debug.tar.gz" \
   -C "$derived/Build/Products/Debug" Ardia.app
 shasum -a 256 "$out/Ardia-pr91-native-Debug.tar.gz" > "$out/Ardia-pr91-native-Debug.tar.gz.sha256"
-git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml apps/browser/macos/Podfile.lock
+git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
+bun "$here/pr91-native-manifest.mjs" --pod-lock
 [[ "$ARDIA_CI_CODESIGN_EXIT" == 0 ]]
 export ARDIA_CI_PHASE=complete

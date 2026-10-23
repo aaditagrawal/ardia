@@ -7,8 +7,42 @@ const env = process.env;
 const out = env.ARDIA_CI_OUTPUT;
 const settingsFile = join(out, 'build-settings.json');
 const keys = ['ARCHS', 'CONFIGURATION', 'SDKROOT', 'SDK_VERSION', 'MACOSX_DEPLOYMENT_TARGET', 'CODE_SIGN_STYLE', 'CODE_SIGN_IDENTITY', 'DEVELOPMENT_TEAM', 'CODE_SIGN_ENTITLEMENTS', 'CODE_SIGNING_ALLOWED', 'CODE_SIGNING_REQUIRED', 'ENABLE_HARDENED_RUNTIME', 'FORCE_BUNDLING', 'GCC_PREPROCESSOR_DEFINITIONS', 'SWIFT_ACTIVE_COMPILATION_CONDITIONS', 'SWIFT_OPTIMIZATION_LEVEL', 'OTHER_SWIFT_FLAGS', 'PRODUCT_BUNDLE_IDENTIFIER', 'ARDIACORE_STAGE_DIR'];
+const lockPath = 'apps/browser/macos/Podfile.lock';
+const originalLock = () => execFileSync('git', ['show', 'HEAD:' + lockPath], { encoding: 'utf8' });
+const normalizeLock = (text, oldValue, newValue) => {
+  const needle = 'SPEC CHECKSUMS:\n  ArdiaCore: ' + oldValue + '\n';
+  if (text.split(needle).length !== 2) throw new Error('Expected exactly one ArdiaCore checksum entry');
+  return text.replace(needle, 'SPEC CHECKSUMS:\n  ArdiaCore: ' + newValue + '\n');
+};
 
-if (process.argv.includes('--source')) {
+if (process.argv.includes('--relocate-pod-lock')) {
+  const log = readFileSync(join(out, 'pods.log'), 'utf8').replace(/\u001b\[[0-9;]*m/g, '');
+  const change = log.slice(log.lastIndexOf('SPEC CHECKSUMS:')).trim().match(/^SPEC CHECKSUMS:\s*\n\s+ArdiaCore:\s*\n\s+New Lockfile: ([a-f0-9]{40})\s*\n\s+Old Lockfile: ([a-f0-9]{40})$/);
+  if (!change || !log.includes('There were changes to the lockfile in deployment mode')) throw new Error('Pod failure is not the isolated ArdiaCore checksum mismatch');
+  const [, effectiveChecksum, committedChecksum] = change;
+  const specPath = 'apps/browser/macos/Pods/Local Podspecs/ArdiaCore.podspec.json';
+  const spec = readFileSync(specPath);
+  if (createHash('sha1').update(spec).digest('hex') !== effectiveChecksum) throw new Error('Generated ArdiaCore spec checksum does not match the CocoaPods diagnostic');
+  const headerPath = JSON.parse(spec).pod_target_xcconfig?.HEADER_SEARCH_PATHS;
+  const expectedHeaderPath = '"' + process.cwd() + '/engine/ardiacore/src/ardia/core/public"';
+  if (headerPath !== expectedHeaderPath) throw new Error('Unexpected ArdiaCore header search path');
+  const original = originalLock();
+  if (readFileSync(lockPath, 'utf8') !== original) throw new Error('Podfile.lock changed before checksum normalization');
+  const effective = normalizeLock(original, committedChecksum, effectiveChecksum);
+  writeFileSync(join(out, 'Podfile.lock.committed'), original);
+  writeFileSync(join(out, 'Podfile.lock.effective'), effective);
+  writeFileSync(join(out, 'ArdiaCore.effective.podspec.json'), spec);
+  writeFileSync(join(out, 'pod-lock-normalization.json'), JSON.stringify({ reason: 'Runner-local ArdiaCore spec checksum', committedChecksum, effectiveChecksum, generatedHeaderSearchPath: headerPath, committedLockSHA256: createHash('sha256').update(original).digest('hex'), effectiveLockSHA256: createHash('sha256').update(effective).digest('hex'), dependencyGraphUnchanged: true }, null, 2) + '\n');
+  writeFileSync(lockPath, effective);
+} else if (process.argv.includes('--pod-lock')) {
+  const original = originalLock();
+  const normalizationPath = join(out, 'pod-lock-normalization.json');
+  const normalization = existsSync(normalizationPath) ? JSON.parse(readFileSync(normalizationPath, 'utf8')) : null;
+  const expected = normalization ? normalizeLock(original, normalization.committedChecksum, normalization.effectiveChecksum) : original;
+  if (readFileSync(lockPath, 'utf8') !== expected) throw new Error('Unexpected Podfile.lock change');
+  const installedManifest = 'apps/browser/macos/Pods/Manifest.lock';
+  if (readFileSync(installedManifest, 'utf8') !== expected) throw new Error('Installed Pods manifest does not match the verified lock');
+} else if (process.argv.includes('--source')) {
   const snapshot = JSON.parse(readFileSync(join(import.meta.dirname, 'pr91-native-source.json'), 'utf8'));
   for (const file of snapshot.files) {
     const blob = execFileSync('git', ['rev-parse', 'HEAD:' + file.path], { encoding: 'utf8' }).trim();
@@ -60,6 +94,7 @@ if (process.argv.includes('--source')) {
     bundledJavascript: existsSync(join(out, 'bundle-validation.json')) ? JSON.parse(readFileSync(join(out, 'bundle-validation.json'), 'utf8')) : null,
     javascriptBundleSHA256: version('main.jsbundle.sha256'),
     sourceSnapshot: existsSync(join(out, 'source-snapshot.json')) ? JSON.parse(readFileSync(join(out, 'source-snapshot.json'), 'utf8')) : null,
+    ciPodLockNormalization: existsSync(join(out, 'pod-lock-normalization.json')) ? JSON.parse(readFileSync(join(out, 'pod-lock-normalization.json'), 'utf8')) : null,
     buildCommand: 'scripts/agent/build-app --as pr91-native --config Debug --force --wait 120',
     signingOverrides: version('ci-signing.xcconfig'),
     buildSettings: existsSync(settingsFile) ? JSON.parse(readFileSync(settingsFile, 'utf8')) : null,
