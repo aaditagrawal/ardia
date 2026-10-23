@@ -226,15 +226,28 @@ test("a right-hand peek panel covers the page from its left edge to the window's
   assert.equal(dm.overPeek("w1", 999), false);
 });
 
-test("on the right the lights sit in the window's top-right corner, mirrored, and leave with the sidebar", () => {
+test("on the right the lights are placed from the window's right edge, mirrored, and leave with the sidebar", () => {
   const { lightsRight, edge } = dm.HEADER_TOOLS;
-  const [close] = dm.lightsCenter(0, 0, dm.LIGHTS_CENTER, 1000);
-  assert.equal(close, 1000 - (lightsRight - edge), "close button centre: as far in from the right as the zoom button is from the left");
-  assert.equal(close + (lightsRight - edge - 25), 1000 - 25, "zoom button centre: 25 in from the right, as the close button is from the left");
-  assert.equal(1000 - (close - edge), lightsRight, "same outer inset as the left group");
-  assert.deepEqual(dm.lightsCenter(0, 0, dm.ARC_LIGHTS_CENTER, 1000), [close, 24], "Arc's row keeps its height");
-  assert.deepEqual(dm.lightsCenter(190, 0, dm.LIGHTS_CENTER, 1000), [close + 190, 27], "hidden: out past the right edge with the sidebar");
-  assert.deepEqual(dm.lightsCenter(-5, 5, dm.LIGHTS_CENTER, 1000), [close - 5, 32], "in the peek panel: in by the panel's inset and down");
+  const [close] = dm.lightsCenter(0, 0, dm.LIGHTS_CENTER, true);
+  assert.equal(close, -(lightsRight - edge), "close button centre: as far in from the right as the zoom button is from the left");
+  assert.equal(close + (lightsRight - edge - 25), -25, "zoom button centre: 25 in from the right, as the close button is from the left");
+  assert.equal(-(close - edge), lightsRight, "same outer inset as the left group");
+  assert.deepEqual(dm.lightsCenter(0, 0, dm.ARC_LIGHTS_CENTER, true), [close, 24], "Arc's row keeps its height");
+  assert.deepEqual(dm.lightsCenter(190, 0, dm.LIGHTS_CENTER, true), [close + 190, 27], "hidden: out past the right edge with the sidebar");
+  assert.deepEqual(dm.lightsCenter(-5, 5, dm.LIGHTS_CENTER, true), [close - 5, 32], "in the peek panel: in by the panel's inset and down");
+});
+
+test("a window opening with its sidebar on the right asks for lights from its right edge, with or without a saved frame", async () => {
+  const { openingLightsCenter } = await import("./windowLayout.ts");
+  const { lightsRight, edge } = dm.HEADER_TOOLS;
+  const state = (frame, sidebarOpen, sidebarSide = "right", tabLayout = "sidebar") => ({
+    settings: { sidebarSide, tabLayout, addressBar: "toolbar", sidebarWidth: 190 },
+    windows: { w1: { sidebarOpen, frame } },
+  });
+  assert.deepEqual(openingLightsCenter(state(null, true), "w1"), [-(lightsRight - edge), 27], "a new window with no frame yet: no width needed");
+  assert.deepEqual(openingLightsCenter(state([0, 0, 1400, 900], true), "w1"), [-(lightsRight - edge), 27], "a saved frame's width doesn't enter it either");
+  assert.deepEqual(openingLightsCenter(state(null, false), "w1"), [190 - (lightsRight - edge), 27], "hidden: past the right edge by the sidebar's width");
+  assert.deepEqual(openingLightsCenter(state(null, false, "left"), "w1"), [25 - 190, 27], "left: unchanged");
 });
 
 test("Arc's layout keeps the address bar in a hidden sidebar (no toolbar on the card); Dia's layout and the switch off don't", async () => {

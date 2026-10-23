@@ -1,5 +1,5 @@
 import { FadeLabel, Surface, Symbol } from "@ardia/shell";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { displayUrl } from "@ardia/core";
 import { hex, useTheme } from "../../lib/theme";
@@ -17,7 +17,7 @@ import { clickTab, tabTitle } from "./actions";
 import { cardHoverProps, dismissHover, setHoverSpace } from "./hover";
 import { playerEdge } from "./geometry";
 import { hoverCardOrigin, useHoverCardMotion, useHoverCardPlacement } from "./hoverMotion";
-import { useSidebarUi, type Anchor, type Hover } from "./state";
+import { hoverLayout, refreshHover, useSidebarUi, type Anchor, type Hover } from "./state";
 import { TabIcon } from "./TabIcon";
 import { HoverPlayer, useShowsMiniPlayer } from "../media/HoverPlayer";
 import { useSidebarOnRight } from "../layout/windowLayout";
@@ -38,10 +38,13 @@ export function HoverCard({ windowId, width, height }: { windowId: string; width
   const shown = drawn ?? target;
   const player = useShowsMiniPlayer(shown?.kind === "tab" ? shown.id : undefined);
   const right = useSidebarOnRight();
+  const currentLayout = useBrowser(() => hoverLayout(windowId));
+  const stale = !!shown && shown.layout !== currentLayout;
+  useEffect(() => void refreshHover(windowId, dismissHover), [windowId, currentLayout]);
   const sidebarWidth = useSidebarWidth(windowId);
   const edge = shown && player ? playerEdge(shown.anchor, sidebarWidth, width, right) : undefined;
-  useHoverCardPlacement(motion, shown ? hoverCardOrigin(shown.anchor, right, 0, edge) : null, { width, height });
-  if (!shown) return null;
+  useHoverCardPlacement(motion, shown && !stale ? hoverCardOrigin(shown.anchor, right, 0, edge) : null, { width, height });
+  if (!shown || stale) return null;
   return (
     <Animated.View pointerEvents={leaving || entering ? "none" : "box-none"} style={[StyleSheet.absoluteFill, motion.style]}>
       <HoverContent hover={shown} windowId={windowId} edge={edge} />

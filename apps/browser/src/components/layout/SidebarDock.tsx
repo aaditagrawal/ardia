@@ -176,14 +176,14 @@ function SidebarDock({
   const draggingTab = useTabDrag((d) => d.windowId === windowId && d.tabIds.length > 0);
   const nativeHold = peeking ? holdWidth : draggingTab ? STRIP_WIDTH : 0;
   useEffect(() => {
-    if (!watching || right) return;
+    if (!watching) return;
     const sub = onWindowEvent((e) => {
-      if (e.type !== "leftEdge" || e.id !== windowId) return;
+      if (e.type !== "leftEdge" || e.id !== windowId || e.right !== right) return;
       edgeOver.current = e.over;
       if (e.over) latestPeek.current.show();
       else latestPeek.current.hide();
     });
-    watchLeftEdge(windowId, true, nativeHold);
+    watchLeftEdge(windowId, true, nativeHold, right);
     return () => {
       sub.remove();
       watchLeftEdge(windowId, false);
@@ -202,7 +202,7 @@ function SidebarDock({
     () => peek.slide.interpolate({ inputRange: [0, 1], outputRange: [-12 * mirror, width * mirror] }),
     [peek.slide, width, mirror],
   );
-  useTrafficLights(windowId, dock, peek.slide, { width, peeking, fullscreen, lights, rightOf: right && !fullscreen ? windowWidth : undefined });
+  useTrafficLights(windowId, dock, peek.slide, { width, peeking, fullscreen, lights, fromRight: right && !fullscreen });
   const sidebar = useMemo(
     () => (
       <ProfileSwipe>
@@ -296,7 +296,7 @@ function useTrafficLights(
   windowId: string,
   dock: Animated.Value,
   slide: Animated.Value,
-  o: { width: number; peeking: boolean; fullscreen: boolean; lights: readonly [number, number]; rightOf?: number },
+  o: { width: number; peeking: boolean; fullscreen: boolean; lights: readonly [number, number]; fromRight: boolean },
 ) {
   const values = useRef({ dock: 1, slide: 0 });
   const apply = useRef<() => void>(() => {});
@@ -304,12 +304,11 @@ function useTrafficLights(
   apply.current = () => {
     const v = values.current;
     const offset = o.fullscreen ? 0 : o.peeking ? (o.width + 12) * (1 - v.slide) - PEEK_ORIGIN[0] : o.width * (1 - v.dock);
-    if (o.rightOf === 0) return;
-    const center = lightsCenter(offset, o.peeking && !o.fullscreen ? PEEK_ORIGIN[1] : 0, o.lights, o.rightOf);
-    const key = center ? center.join(",") : "";
+    const center = lightsCenter(offset, o.peeking && !o.fullscreen ? PEEK_ORIGIN[1] : 0, o.lights, o.fromRight);
+    const key = center ? `${center.join(",")},${o.fromRight}` : "";
     if (key === sent.current) return;
     sent.current = key;
-    void setTrafficLightsCenter(windowId, center);
+    void setTrafficLightsCenter(windowId, center, o.fromRight);
   };
   useEffect(() => {
     values.current.dock = (dock as unknown as { __getValue(): number }).__getValue();
@@ -332,5 +331,5 @@ function useTrafficLights(
     });
     return () => slide.removeListener(b);
   }, [slide, o.peeking]);
-  useEffect(() => apply.current(), [o.width, o.peeking, o.fullscreen, o.lights, o.rightOf]);
+  useEffect(() => apply.current(), [o.width, o.peeking, o.fullscreen, o.lights, o.fromRight]);
 }

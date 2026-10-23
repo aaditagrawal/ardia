@@ -11,12 +11,13 @@ import { launch, reporter, session, sleep } from "../../../scripts/lib/instance.
 const args = process.argv.slice(2);
 const appArg = args.find((a) => !a.startsWith("--"));
 if (!appArg) {
-  console.error("usage: node windowing-test.mjs <Debug Ardia.app> [--port=<DevTools port>] [--keep-data]");
+  console.error("usage: node windowing-test.mjs <Debug Ardia.app> [--port=<DevTools port>] [--keep-data] [--js=none|pinned|live]");
   process.exit(2);
 }
 const appPath = resolve(appArg);
 const port = args.find((a) => a.startsWith("--port="))?.slice(7);
 const keep = args.includes("--keep-data");
+const js = args.find((a) => a.startsWith("--js="))?.slice(5);
 const scratch = mkdtempSync(join(tmpdir(), "ac-windowing-"));
 const data = join(scratch, "data");
 const rep = reporter(join(scratch, "windowing-test.log"), { name: "windowing-test" });
@@ -205,7 +206,7 @@ try {
   mkdirSync(data, { recursive: true });
   const built = spawnSync("swiftc", ["-O", recorderSource, "-o", recorder], { encoding: "utf8" });
   if (built.status !== 0) rep.log(`(no recorder: ${built.stderr.trim().split("\n")[0]})`);
-  app = await launch(appPath, { data, port, session: fixture(), onboarded: true, probe: true });
+  app = await launch(appPath, { data, port, session: fixture(), onboarded: true, probe: true, ...(js ? { js } : {}) });
   rep.log(`instance: pid ${app.pid}, DevTools port ${app.port}, data ${data}`);
   await sleep(2500);
   let probe = null;
@@ -248,6 +249,45 @@ try {
       }
       assert.ok(off < 6, `first frame ${off.toFixed(1)} levels from the settled window`);
     } finally {
+      await closeWindowsBut(ids);
+    }
+  });
+
+  await check("sidebar on the right: lights are at the top right when a new window is first ordered in, with or without a saved frame, and stay there", async () => {
+    const ids = await run(`return Object.keys(st().windows);`);
+    const closeX = (lights, width) => lights[0] + lights[2] / 2 - (width - 70.75);
+    try {
+      const w1 = await run(`st().updateSettings({ sidebarSide: "right" }); return settle(600).then(() => win("w1")).then((n) => Promise.all([C.devWindow(n, "lights"), C.chromeWindows().then((ws) => ws.find((w) => w.window === n).frame)]));`);
+      const w1Width = Number(w1[1].match(/[-\d.]+/g)[2]);
+      assert.ok(Math.abs(closeX(w1[0].split(",").map(Number), w1Width)) < 1, `w1 after the switch: ${w1[0]} in ${w1Width}`);
+      for (const frame of [null, [160, 140, 900, 620]]) {
+        const label = frame ? "saved frame" : "no frame";
+        const seen = await run(`
+          let before, t0, number = null;
+          const samples = [];
+          const poll = () => C.chromeWindows().then((ws) => {
+            const w = ws.find((w) => !before.has(w.window) && w.hasRoot && w.visible);
+            if (!w) return Date.now() - t0 > 3000 ? null : settle(5).then(poll);
+            number = w.window;
+            return C.devWindow(w.window, "lights").then((l) => {
+              samples.push({ width: Number(w.frame.match(/[-\\d.]+/g)[2]), lights: l ? l.split(",").map(Number) : null });
+              return samples.length >= 40 || Date.now() - t0 > 3000 ? null : settle(5).then(poll);
+            });
+          });
+          return C.chromeWindows().then((ws) => { before = new Set(ws.map((w) => w.window)); t0 = Date.now(); return ac.actions.openWindow(${frame ? JSON.stringify({ frame }) : ""}); })
+            .then(poll).then(() => (number === null ? null : C.devWindow(number, "lightsAtOrder"))).then((ordered) => ({ ordered, samples }));`);
+        assert.ok(seen.ordered, `${label}: no lights recorded as the window was ordered in (a Debug build records them)`);
+        const [x, y, w, h, width] = seen.ordered.split(",").map(Number);
+        assert.ok(Math.abs(closeX([x, y, w, h], width)) < 1, `${label}: as it was ordered in, the close button sat at ${x} in a ${width} wide window`);
+        if (frame) assert.equal(width, frame[2], "the saved frame's own width");
+        const off = seen.samples.filter((p) => !p.lights || Math.abs(closeX(p.lights, p.width)) >= 1);
+        assert.deepEqual(off, [], `${label}: every sampled frame after that keeps them there`);
+        await closeWindowsBut(ids);
+      }
+      const back = await run(`st().updateSettings({ sidebarSide: "left" }); return settle(600).then(() => act("w1", "lights"));`);
+      assert.ok(Math.abs(back.split(",").map(Number)[0] + 7 - 25) < 1, `back on the left: ${back}`);
+    } finally {
+      await run(`st().updateSettings({ sidebarSide: "left" }); return settle(300);`);
       await closeWindowsBut(ids);
     }
   });
@@ -324,6 +364,37 @@ try {
     const blank = pages.filter((c) => sd(c) < 3);
     if (blank.length > 1) dump("dropped-page", pages.filter((c, i) => pages.slice(Math.max(0, i - 1), i + 2).some((n) => sd(n) < 3)), page);
     assert.ok(blank.length <= 1, `${blank.length} frames of w1's page blank`);
+  });
+
+  await check("sidebar on the right across a relaunch: the launch layout keeps its lights from the right edge, and a side switched since isn't reused", async () => {
+    const relaunch = async (edit) => {
+      await app.quit();
+      app = null;
+      if (edit) {
+        const saved = JSON.parse(readFileSync(join(data, "session.json"), "utf8"));
+        edit(saved);
+        writeFileSync(join(data, "session.json"), JSON.stringify(saved));
+      }
+      app = await launch(appPath, { data, port, ...(js ? { js } : {}) });
+      await sleep(2500);
+    };
+    const orderedX = () => run(`return win("w1").then((n) => C.devWindow(n, "lightsAtOrder"));`).then((v) => v && v.split(",").map(Number));
+    await run(`st().updateSettings({ sidebarSide: "right" }); if (!st().windows.w1.sidebarOpen) st().toggleSidebar("w1"); return settle(1500);`);
+    await relaunch();
+    let layout = null;
+    try { layout = JSON.parse(readFileSync(join(data, "launch-layout.json"), "utf8")); } catch {}
+    const saved = layout?.windows?.w1;
+    if (saved) {
+      assert.ok(String(saved.state).includes('"s.sidebarSide":"right"'), `the layout's state names the side: ${saved.state}`);
+      assert.equal(saved.lights?.length, 3, `lights saved from the right edge: ${JSON.stringify(saved.lights)}`);
+      assert.equal(saved.lights[2], true);
+      assert.ok(Math.abs(saved.lights[0] + 70.75) < 1, `close button 70.75 in from the right: ${JSON.stringify(saved.lights)}`);
+    } else rep.log("(no launch layout recorded for w1: only the relaunched window's lights are checked)");
+    const right = await orderedX();
+    assert.ok(right && Math.abs(right[0] + right[2] / 2 - (right[4] - 70.75)) < 1, `relaunched on the right, as w1 was ordered in: ${right}`);
+    await relaunch((s) => { s.settings.sidebarSide = "left"; });
+    const left = await orderedX();
+    assert.ok(left && Math.abs(left[0] + left[2] / 2 - 25) < 1, `relaunched after a switch to the left, as w1 was ordered in: ${left}`);
   });
 } finally {
   await app?.quit();

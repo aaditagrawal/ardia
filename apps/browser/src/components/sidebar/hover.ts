@@ -4,7 +4,7 @@ import { markHoverProps } from "../../lib/hoverShift";
 import { useBrowser } from "../../store/browser";
 import { PageProfileContext } from "../../store/hooks";
 import { cardReach, type Point, type Rect } from "./hoverAim";
-import { measureRow, setSidebarUi, sidebarUi, type Target } from "./state";
+import { measureForHover, setSidebarUi, sidebarUi, type Target } from "./state";
 
 const SHOW_DELAY_MS = 500;
 const HIDE_DELAY_MS = 160;
@@ -114,11 +114,11 @@ export function suppressHover(value: boolean) {
 }
 
 async function show(windowId: string, target: Target, mine: number) {
-  const anchor = await measureRow(windowId, target.id);
-  if (mine !== ticket || suppressed || !anchor || panelOpen(windowId) || sidebarUi().iconPicker || sidebarUi().renaming) return;
+  const measured = await measureForHover(windowId, target.id);
+  if (mine !== ticket || suppressed || !measured || panelOpen(windowId) || sidebarUi().iconPicker || sidebarUi().renaming) return;
   if (onCard && sidebarUi().hover) return;
   exitPoint = null;
-  setSidebarUi({ hover: { windowId, ...target, anchor } });
+  setSidebarUi({ hover: { windowId, ...target, ...measured } });
 }
 
 export function hoverEnter(windowId: string, target: Target) {

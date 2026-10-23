@@ -70,9 +70,14 @@ enum ChromeWindows {
 
   private static let drawnMoves = KillSwitch.isOn("sidebarSlideLean")
 
-  static func setTrafficLightsCenter(_ center: NSPoint?, in window: NSWindow) {
+  static func noteLightsAtOrder(in window: NSWindow) {
+    guard let host, (host as AnyObject).responds(to: NSSelectorFromString("noteLightsAtOrderIn:")) else { return }
+    host.perform(NSSelectorFromString("noteLightsAtOrderIn:"), with: window)
+  }
+
+  static func setTrafficLightsCenter(_ center: NSPoint?, in window: NSWindow, animated: Bool = true) {
     let move = NSSelectorFromString("moveTrafficLightsCenter:inWindow:")
-    let selector = drawnMoves && (host as AnyObject?)?.responds(to: move) == true ? move : NSSelectorFromString("setTrafficLightsCenter:inWindow:")
+    let selector = animated && drawnMoves && (host as AnyObject?)?.responds(to: move) == true ? move : NSSelectorFromString("setTrafficLightsCenter:inWindow:")
     host?.perform(selector, with: center.map { NSValue(point: $0) }, with: window)
   }
 
