@@ -69,6 +69,7 @@ try {
   demand(before.javascriptBundle === manifest.javascriptBundleSHA256.split(/\s+/)[0], 'Input bundled JavaScript hash mismatch');
   const signArgs = ['--force', '--sign', '-', '--timestamp=none', '--preserve-metadata=identifier,entitlements,flags'];
   signedCapture([...signArgs, join(app, 'Contents/Frameworks/Sparkle.framework')], join(out, 'sparkle-resign.txt'));
+  signedCapture([...signArgs, join(app, 'Contents/Frameworks/hermes.framework')], join(out, 'hermes-resign.txt'));
   signedCapture([...signArgs, app], join(out, 'app-resign.txt'));
   const signatureResult = signedCapture(['--verify', '--deep', '--strict', '--verbose=2', app], join(out, 'codesign-verify.txt'));
   signedCapture(['-dvv', app], join(out, 'codesign-details.txt'));
@@ -83,7 +84,7 @@ try {
   const buildFinishedAt = manifest.finishedAt;
   const packagingSHA = git('rev-parse', 'HEAD');
   const runURL = process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID;
-  const packaging = { inputRunURL: buildRunURL, inputArchiveSHA256: inputHash, packagingGitSHA: packagingSHA, tools: { xcode: packagingXcode, sdk: packagingSDK }, signaturesReplaced: ['Contents/Frameworks/Sparkle.framework', 'Ardia.app'], compiledContentSHA256Before: before, compiledContentSHA256After: after, compiledContentUnchanged: true, codesignVerificationExitCode: 0 };
+  const packaging = { inputRunURL: buildRunURL, inputArchiveSHA256: inputHash, packagingGitSHA: packagingSHA, tools: { xcode: packagingXcode, sdk: packagingSDK }, signaturesReplaced: ['Contents/Frameworks/Sparkle.framework', 'Contents/Frameworks/hermes.framework', 'Ardia.app'], compiledContentSHA256Before: before, compiledContentSHA256After: after, compiledContentUnchanged: true, codesignVerificationExitCode: 0 };
   writeFileSync(join(out, 'repackage-provenance.json'), JSON.stringify(packaging, null, 2) + '\n');
   const result = { ...manifest, runURL, buildRunURL, buildStartedAt, buildFinishedAt, startedAt, finishedAt: new Date().toISOString(), exitCode: 0, phase: 'complete', packagingGitSHA: packagingSHA, packaging, codesignVerification: { exitCode: 0, result: signatureResult }, archive: { file: 'Ardia-pr91-native-Debug.tar.gz', sha256: digest } };
   demand(result.codesignVerification.exitCode === 0 && result.packaging.compiledContentUnchanged === true, 'Signature acceptance failed');
