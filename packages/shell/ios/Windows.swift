@@ -120,7 +120,6 @@ final class WindowManager: NSObject, NSWindowDelegate {
     windows[id] = window
     if lightsCenters[id] != nil { ChromeWindows.setTrafficLightsCenter(lightsCenter(id, in: window), in: window, animated: false) }
     if smallSize == nil { lastPlaced = window }
-    ChromeWindows.noteLightsAtOrder(in: window)
     if window.isMiniaturized {
       observeFrame(window)
       return reportFrame(window)

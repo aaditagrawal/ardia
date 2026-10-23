@@ -1292,7 +1292,6 @@ CGImageRef TakePrefetched(NSString *windowId) {
                                                                    DropPictures(closing);
                                                                    Forget(closing);
                                                                  }];
-  [ACChromeWindowHost noteLightsAtOrderIn:window];
   [window makeKeyAndOrderFront:nil];
   [window displayIfNeeded];
   [CATransaction flush];

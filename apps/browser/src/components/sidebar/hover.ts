@@ -3,8 +3,9 @@ import type { LayoutChangeEvent } from "react-native";
 import { markHoverProps } from "../../lib/hoverShift";
 import { useBrowser } from "../../store/browser";
 import { PageProfileContext } from "../../store/hooks";
+import { sidebarOnRight } from "../layout/windowLayout";
 import { cardReach, type Point, type Rect } from "./hoverAim";
-import { measureForHover, setSidebarUi, sidebarUi, type Target } from "./state";
+import { measureForHover, moveHoverLayout, setSidebarUi, sidebarUi, type Target } from "./state";
 
 const SHOW_DELAY_MS = 500;
 const HIDE_DELAY_MS = 160;
@@ -156,12 +157,21 @@ export function dismissHover() {
   ticket++;
   clearTimeout(showTimer);
   clearTimeout(hideTimer);
-  if (sidebarUi().hover) hideCard();
+  hideCard();
 }
 
 export function dismissHoverIn(windowId: string) {
   if (ownerWindow === windowId || sidebarUi().hover?.windowId === windowId) dismissHover();
 }
+
+useBrowser.subscribe((s, prev) => {
+  if (s.settings !== prev.settings || s.windows !== prev.windows)
+    for (const id of Object.keys(s.windows))
+      if (sidebarOnRight(s, id) !== sidebarOnRight(prev, id)) {
+        moveHoverLayout(id);
+        dismissHoverIn(id);
+      }
+});
 
 function releaseAnchor(windowId: string, id: string) {
   if (underPointer === id) underPointer = null;

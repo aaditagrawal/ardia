@@ -103,6 +103,10 @@ export function DockedLayout({
     ),
   );
   const right = useSidebarOnRight();
+  const view = useRef<View>(null);
+  useLayoutEffect(() => {
+    if (!fullscreen) view.current?.setNativeProps({ style: right ? { paddingLeft: inset.left } : { paddingRight: inset.right } });
+  }, [right]);
   const width = useSidebarUi((u) => u.dragWidth[windowId]) ?? savedWidth;
   const arc = addressBar && !topTabs && switchOn("sidebarSlide");
   const lights = addressBar && !topTabs ? ARC_LIGHTS_CENTER : LIGHTS_CENTER;
@@ -118,6 +122,7 @@ export function DockedLayout({
   return (
     <>
       <Animated.View
+        ref={view}
         style={
           fullscreen
             ? { flex: 1 }
@@ -305,7 +310,7 @@ function useTrafficLights(
     const v = values.current;
     const offset = o.fullscreen ? 0 : o.peeking ? (o.width + 12) * (1 - v.slide) - PEEK_ORIGIN[0] : o.width * (1 - v.dock);
     const center = lightsCenter(offset, o.peeking && !o.fullscreen ? PEEK_ORIGIN[1] : 0, o.lights, o.fromRight);
-    const key = center ? `${center.join(",")},${o.fromRight}` : "";
+    const key = center ? center.join(",") : "";
     if (key === sent.current) return;
     sent.current = key;
     void setTrafficLightsCenter(windowId, center, o.fromRight);
