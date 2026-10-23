@@ -36,6 +36,8 @@ trap finish EXIT
 [[ "$(uname -s)" == Darwin && "$(uname -m)" == arm64 ]]
 [[ "${GITHUB_REPOSITORY:-}" == aaditagrawal/ardia ]]
 [[ "${GITHUB_REF:-}" == refs/heads/verify/right-sidebar-native ]]
+[[ "${DEVELOPER_DIR:-}" == /Applications/Xcode_27.app/Contents/Developer ]]
+[[ -d "$DEVELOPER_DIR" ]]
 bun "$here/pr91-native-manifest.mjs" --source
 [[ "$(git rev-parse HEAD:engine)" == "$ARDIA_CI_ENGINE_TREE" ]]
 [[ -z "$(git status --porcelain -- engine)" ]]
@@ -48,8 +50,11 @@ node --version > "$out/node-version.txt"
 bun --version > "$out/bun-version.txt"
 pod --version > "$out/cocoapods-version.txt"
 xcodebuild -version > "$out/xcode-version.txt"
-xcode-select -p > "$out/developer-directory.txt"
+printf '%s\n' "$DEVELOPER_DIR" > "$out/developer-directory.txt"
 xcrun --sdk macosx --show-sdk-version > "$out/sdk-version.txt"
+xcrun swiftc --version > "$out/swift-version.txt"
+grep -E '^Xcode 27\.' "$out/xcode-version.txt" > /dev/null
+grep -E '^27\.' "$out/sdk-version.txt" > /dev/null
 df -h . > "$out/disk-initial.txt"
 cp "$here/pr91-native-signing.xcconfig" "$out/ci-signing.xcconfig"
 export XCODE_XCCONFIG_FILE="$out/ci-signing.xcconfig"

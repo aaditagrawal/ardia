@@ -11,7 +11,7 @@ permissions:
 jobs:
   native-debug:
     if: github.repository == 'aaditagrawal/ardia'
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 60
     defaults:
       run:
@@ -20,6 +20,7 @@ jobs:
       CI: 'true'
       FORCE_BUNDLING: '1'
       RCT_NEW_ARCH_ENABLED: '0'
+      DEVELOPER_DIR: /Applications/Xcode_27.app/Contents/Developer
     steps:
       - name: Check out verification snapshot
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

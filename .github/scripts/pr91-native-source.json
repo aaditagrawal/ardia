@@ -68,11 +68,6 @@
       "executable": false
     },
     {
-      "path": "packages/shaders/ios/WindowBackdropView.swift",
-      "blob": "22c0a3301f377d30970e6a011785320ca605c7d6",
-      "executable": false
-    },
-    {
       "path": "packages/shell/ios/AppModule.swift",
       "blob": "bae5e5ab073d5e53a7c388b7d96a18645236a277",
       "executable": false
@@ -103,11 +98,10 @@
       "executable": false
     }
   ],
-  "indexSHA256": "c27634e3ba6f163a6fa2368771acf30a146982f524b20fdb66c9f95b83be99c1",
-  "fingerprint": "b08a4992a3ad6dbbd06b09cb878c54a25e336cf2155a56068a128441aaeb238d",
-  "previousSupportGitSHA": "01f337de98a7aa967b5f935c1693a1007ad6738a",
-  "amendedSourcePaths": [
-    "apps/browser/scripts/tab-drag-test.mjs",
+  "indexSHA256": "1217d369763f1eaf8a025caa548a25164212b01cead4177c701f5f3fe582817a",
+  "fingerprint": "49dc636df0278c731caecdda29857790b047f39e05e3c21021d703feff2f7c07",
+  "previousSupportGitSHA": "f12693fb9b0ac5a3aaa7c6c87b88bb6b2e7452fd",
+  "restoredBaselineSourcePaths": [
     "packages/shaders/ios/WindowBackdropView.swift"
   ]
 }
