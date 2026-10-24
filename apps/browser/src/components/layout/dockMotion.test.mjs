@@ -250,9 +250,9 @@ test("on the right the lights sit 25 from the window's right edge, also for a wi
   assert.deepEqual(dm.lightsCenter(0, 0, dm.ARC_LIGHTS_CENTER, true), [close, 24]);
   assert.deepEqual(dm.lightsCenter(190, 0, dm.LIGHTS_CENTER, true), [close + 190, 27], "hidden: out with the sidebar");
   assert.deepEqual(dm.lightsCenter(-5, 5, dm.LIGHTS_CENTER, true), [close - 5, 32], "in the peek panel");
-  const state = (sidebarSide, sidebarOpen, own) => ({ settings: { sidebarSide, tabLayout: "sidebar", addressBar: "toolbar", sidebarWidth: 190 }, windows: { w1: { sidebarOpen, frame: null, tabLayout: own } } });
+  const state = (sidebarSide, sidebarOpen, own, saved = "sidebar") => ({ settings: { sidebarSide, tabLayout: saved, addressBar: "toolbar", sidebarWidth: 190 }, windows: { w1: { sidebarOpen, frame: null, tabLayout: own } } });
   assert.deepEqual(openingLightsCenter(state("right", true), "w1"), [close, 27]);
   assert.deepEqual(openingLightsCenter(state("right", false), "w1"), [close + 190, 27]);
   assert.deepEqual(openingLightsCenter(state("left", false), "w1"), [25 - 190, 27]);
-  assert.deepEqual([state("right", true), state("right", true, "top"), state("left", true)].map((s) => sidebarOnRight(s, "w1")), [true, false, false]);
+  assert.deepEqual([state("right", true), state("right", true, "top"), state("right", true, "sidebar", "top"), state("left", true)].map((s) => sidebarOnRight(s, "w1")), [true, false, true, false]);
 });

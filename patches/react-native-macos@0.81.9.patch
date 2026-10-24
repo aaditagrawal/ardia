@@ -642,6 +642,95 @@ index 3edcc9670a8ccb5eef44524e78445117d2416ed8..1f7951f616996941706f11b380c12051
    _sendIdleEvents = sendIdleEvents;
    if (sendIdleEvents) {
      [self startTimers];
+diff --git a/React/Modules/RCTUIManager.mm b/React/Modules/RCTUIManager.mm
+index 7f1aeff436b8a51514254b72d1fb1fd1ee3b1553..dd2851fec59498902a78204041d994eda3fd7c3c 100644
+--- a/React/Modules/RCTUIManager.mm
++++ b/React/Modules/RCTUIManager.mm
+@@ -7,6 +7,9 @@
+ 
+ #import "RCTUIManager.h"
+ 
++#import <deque> // [Ardia]
++#import <mutex> // [Ardia]
++
+ #import <AVFoundation/AVFoundation.h>
+ #import <React/RCTSurfacePresenterStub.h>
+ #import <react/featureflags/ReactNativeFeatureFlags.h>
+@@ -181,6 +184,14 @@ @implementation RCTUIManager {
+ 
+   // Keyed by viewName
+   NSMutableDictionary *_componentDataByName;
++
++  // [Ardia
++  std::mutex _mainQueueMountsLock;
++  std::deque<std::pair<uint64_t, dispatch_block_t>> _mainQueueMounts;
++  uint64_t _lastMainQueueMount;
++  uint64_t _mainQueueMountsTarget;
++  BOOL _drainingMainQueueMounts;
++  // Ardia]
+ }
+ 
+ @synthesize bridge = _bridge;
+@@ -1321,7 +1332,8 @@ - (void)flushUIBlocksWithCompletion:(void (^)(void))completion
+ 
+   // Execute the previously queued UI blocks
+   RCTProfileBeginFlowEvent();
+-  RCTExecuteOnMainQueue(^{
++  // [Ardia: mounts land in layout order: a live-resize layout on the main thread mounts every older queued mount first.
++  const uint64_t mount = [self enqueueMainQueueMount:^{
+     RCTProfileEndFlowEvent();
+     RCT_PROFILE_BEGIN_EVENT(RCTProfileTagAlways, @"-[UIManager flushUIBlocks]", (@{
+                               @"count" : [@(previousPendingUIBlocks.count) stringValue],
+@@ -1332,7 +1344,48 @@ - (void)flushUIBlocksWithCompletion:(void (^)(void))completion
+     RCT_PROFILE_END_EVENT(RCTProfileTagAlways, @"");
+ 
+     RCTExecuteOnUIManagerQueue(completion);
+-  });
++  }];
++  if (RCTIsMainQueue()) {
++    [self drainMainQueueMountsThrough:mount];
++  } else {
++    dispatch_async(dispatch_get_main_queue(), ^{
++      [self drainMainQueueMountsThrough:mount];
++    });
++  }
++}
++
++- (uint64_t)enqueueMainQueueMount:(dispatch_block_t)mount
++{
++  std::lock_guard<std::mutex> guard(_mainQueueMountsLock);
++  _mainQueueMounts.emplace_back(++_lastMainQueueMount, [mount copy]);
++  return _lastMainQueueMount;
++}
++
++- (void)drainMainQueueMountsThrough:(uint64_t)target
++{
++  RCTAssertMainQueue();
++  _mainQueueMountsTarget = MAX(_mainQueueMountsTarget, target);
++  if (_drainingMainQueueMounts) {
++    return;
++  }
++  _drainingMainQueueMounts = YES;
++  @try {
++    for (;;) {
++      dispatch_block_t mount;
++      {
++        std::lock_guard<std::mutex> guard(_mainQueueMountsLock);
++        if (_mainQueueMounts.empty() || _mainQueueMounts.front().first > _mainQueueMountsTarget) {
++          break;
++        }
++        mount = _mainQueueMounts.front().second;
++        _mainQueueMounts.pop_front();
++      }
++      mount();
++    }
++  } @finally {
++    _drainingMainQueueMounts = NO;
++  }
++  // Ardia]
+ }
+ 
+ - (void)setNeedsLayout
 diff --git a/React/Views/RCTView.m b/React/Views/RCTView.m
 index 0a4efc1fff0a6e32ea1634ab5f863c211f452409..34447fbb3fe6fd5e16c1320e5395090665bcc402 100644
 --- a/React/Views/RCTView.m

@@ -42,7 +42,7 @@ function hideCard() {
   exitPoint = null;
   waiting = null;
   clearTimeout(aimTimer);
-  setSidebarUi({ hover: null });
+  if (sidebarUi().hover) setSidebarUi({ hover: null });
 }
 
 function cardHeldFor(windowId: string, target: Target | null, event: PointerEvent) {
