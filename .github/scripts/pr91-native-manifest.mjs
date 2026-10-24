@@ -3,6 +3,11 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 
+const sourceFile = join(import.meta.dirname, 'pr91-native-source.json');
+if (!existsSync(sourceFile)) throw new Error('Await parent-approved frozen source snapshot; no build authorized from this preparation');
+const sourceSpec = JSON.parse(readFileSync(sourceFile, 'utf8'));
+const expectedAPI = sourceSpec.nativeApiVersion;
+if (!Number.isSafeInteger(expectedAPI) || expectedAPI <= 0) throw new Error('Frozen source snapshot must specify the final native API');
 const env = process.env;
 const out = env.ARDIA_CI_OUTPUT;
 const settingsFile = join(out, 'build-settings.json');
@@ -58,9 +63,9 @@ if (process.argv.includes('--relocate-pod-lock')) {
   const jsSource = readFileSync('apps/browser/src/nativeApi.tsx', 'utf8');
   const native = Number(nativeSource.match(/Constant\("apiVersion"\)\s*\{\s*\(\)\s*->\s*Int\s+in\s+(\d+)/)?.[1]);
   const javascript = Number(jsSource.match(/NATIVE_API_VERSION\s*=\s*(\d+)/)?.[1]);
-  if (native !== 14 || javascript !== 14) throw new Error('Native and JavaScript API versions must both be 14');
+  if (native !== expectedAPI || javascript !== expectedAPI) throw new Error('Native and JavaScript API versions must both match the frozen source snapshot');
   writeFileSync(join(out, 'source-snapshot.json'), JSON.stringify(snapshot, null, 2) + '\n');
-  writeFileSync(join(out, 'source-api.json'), JSON.stringify({ expected: 14, native, javascript, snapshotBlobsVerified: true, runtimeVerified: false }, null, 2) + '\n');
+  writeFileSync(join(out, 'source-api.json'), JSON.stringify({ expected: expectedAPI, native, javascript, snapshotBlobsVerified: true, runtimeVerified: false }, null, 2) + '\n');
 } else if (process.argv.includes('--settings')) {
   const settings = [...JSON.parse(readFileSync(join(out, 'settings.raw.json'), 'utf8')), ...JSON.parse(readFileSync(join(out, 'settings.shell.raw.json'), 'utf8'))];
   const filtered = settings.map(({ target, buildSettings }) => ({ target, settings: Object.fromEntries(keys.filter(key => key in buildSettings).map(key => [key, buildSettings[key]])) }));
@@ -78,8 +83,9 @@ if (process.argv.includes('--relocate-pod-lock')) {
   const file = process.argv[process.argv.indexOf('--bundle') + 1];
   const text = readFileSync(file, 'utf8');
   if (!/\b__DEV__\s*=\s*true\b/.test(text)) throw new Error('Bundled JavaScript does not declare __DEV__=true');
-  if (!/\bNATIVE_API_VERSION\s*=\s*(?:[A-Za-z_$][\w$]*\.NATIVE_API_VERSION\s*=\s*)?14\b/.test(text)) throw new Error('Metro source bundle does not contain API14');
-  writeFileSync(join(out, 'bundle-validation.json'), JSON.stringify({ dev: true, nativeApiVersion: 14, metroSourceBundleSHA256: createHash('sha256').update(text).digest('hex'), bundledRuntimeVerified: false }, null, 2) + '\n');
+  const apiAssignment = new RegExp(String.raw`\bNATIVE_API_VERSION\s*=\s*(?:[A-Za-z_$][\w$]*\.NATIVE_API_VERSION\s*=\s*)?${expectedAPI}\b`);
+  if (!apiAssignment.test(text)) throw new Error('Metro source bundle API differs from the frozen snapshot');
+  writeFileSync(join(out, 'bundle-validation.json'), JSON.stringify({ dev: true, nativeApiVersion: expectedAPI, metroSourceBundleSHA256: createHash('sha256').update(text).digest('hex'), bundledRuntimeVerified: false }, null, 2) + '\n');
 } else {
   const archive = join(out, 'Ardia-pr91-native-Debug.tar.gz');
   const version = name => existsSync(join(out, name)) ? readFileSync(join(out, name), 'utf8').trim() : null;
@@ -97,7 +103,7 @@ if (process.argv.includes('--relocate-pod-lock')) {
     configuration: 'Debug',
     forceBundling: true,
     javascriptDev: true,
-    nativeApi: existsSync(join(out, 'source-api.json')) ? JSON.parse(readFileSync(join(out, 'source-api.json'), 'utf8')) : { expected: 14, runtimeVerified: false },
+    nativeApi: existsSync(join(out, 'source-api.json')) ? JSON.parse(readFileSync(join(out, 'source-api.json'), 'utf8')) : { expected: expectedAPI, runtimeVerified: false },
     registeredHookNamesInBinary: version('debug-hooks.txt'),
     bundledJavascript: existsSync(join(out, 'bundle-validation.json')) ? JSON.parse(readFileSync(join(out, 'bundle-validation.json'), 'utf8')) : null,
     javascriptBundleSHA256: version('main.jsbundle.sha256'),

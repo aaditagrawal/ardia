@@ -1,11 +1,18 @@
 {
-  "sourceTree": "ddb365f19929f236346d89e8ae093229d9a36383",
-  "sourceHEAD": "78dd02332a9c1f27d5286f277005922f423e2d3e",
-  "mergeHEAD": "846be5977c68bfc3b46d5642f833128492b910c7",
-  "sharedIndexSHA256": "9669b276aa188cd6adbad5d887764246803bb3b88f6b55b4025aa5bba7f706dd",
-  "trackedFiles": 1978,
-  "sourceBlobsSHA256": "da9f7276afabb0c6bf9529311a048217dc06cb5c1820f6b6fc7dd0f0513d9d23",
-  "engineTree": "88d316b82c81158dd4fa6176d269acd81c049e54",
+  "sourceTree": "dfc24443edb1d473b1e1f6555c94ce99926ddd45",
+  "sourceHEAD": "038c83cb59b51927b1e4fbae94e066c6527ccdc2",
+  "mergeHEAD": "9df600bfd20ffdb98ead2815eef280843d62ffaa",
+  "incomingMain": "9df600bfd20ffdb98ead2815eef280843d62ffaa",
+  "sharedIndexSHA256": "b0ccbf5c9ddadd9b25e938f3ac8b6874aee4a2af0de4d011421dbbd4e16dfff1",
+  "trackedFiles": 1983,
+  "sourceBlobsSHA256": "aba32b0af5700457cfb2f7142503a513fe9ea69137d5d6c3667a1b0171453015",
+  "engineTree": "6b96c16ab2ccc3b93ee28278ec0ed495aad7009a",
+  "engine": {
+    "tree": "6b96c16ab2ccc3b93ee28278ec0ed495aad7009a",
+    "version": "0.2.40-nightly.8",
+    "archiveSHA256": "f3a4b15b5254285b2d718040946e569971742d7a9c8378e55d78b6818889688c"
+  },
+  "nativeApiVersion": 14,
   "files": [
     {
       "mode": "100644",
@@ -359,7 +366,7 @@
     },
     {
       "mode": "100644",
-      "blob": "ce7745dd4a4a1a05d1084890af09cfd281118a19",
+      "blob": "77aee8cbf4efb5d766d51af5c30dcdd9bc5a4fde",
       "path": "AGENTS.md"
     },
     {
@@ -1514,7 +1521,7 @@
     },
     {
       "mode": "100644",
-      "blob": "cd39100c08900345873558c9be13d176c800cf6f",
+      "blob": "d176a6f8b17e3ff2bb4d2289928f42536d9e518a",
       "path": "apps/browser/macos/Ardia.xcodeproj/project.pbxproj"
     },
     {
@@ -1789,7 +1796,7 @@
     },
     {
       "mode": "100644",
-      "blob": "e7c3638cc1927ada4d189ed86c6b94735def5b00",
+      "blob": "5e5462c0f0fa3dcb73621d1703fa5cc9429968a2",
       "path": "apps/browser/scripts/tab-drag-test.mjs"
     },
     {
@@ -1839,12 +1846,12 @@
     },
     {
       "mode": "100644",
-      "blob": "75eb26d34ff7754db0fc53729c9be13123885477",
+      "blob": "4fcc18636136b873120b1f2ecc165fd9a1211897",
       "path": "apps/browser/src/components/CommandPanel.tsx"
     },
     {
       "mode": "100644",
-      "blob": "73c92f145f38223d44d8e444291f5271742a5617",
+      "blob": "09c453d00f470bb896eb12f581986a89ca2f8942",
       "path": "apps/browser/src/components/ContentCard.tsx"
     },
     {
@@ -1869,7 +1876,7 @@
     },
     {
       "mode": "100644",
-      "blob": "6f8665144cb1b3b73d364376f20bd22fb8b4d681",
+      "blob": "223fedfcd61f2dc4e0b11f3dfde0879de8fef986",
       "path": "apps/browser/src/components/NewTabPage.tsx"
     },
     {
@@ -1884,7 +1891,7 @@
     },
     {
       "mode": "100644",
-      "blob": "13b5117b88a2db6debc11cc5416bf4e5038acaac",
+      "blob": "b3c5301ddde0daee49348974462d42dccf7cd8f4",
       "path": "apps/browser/src/components/Sidebar.tsx"
     },
     {
@@ -1994,12 +2001,12 @@
     },
     {
       "mode": "100644",
-      "blob": "36d179292a07e43d001da258f98923edcf3b1b24",
+      "blob": "6b2e30e7970320431ca5b2acdc4716eb5620c360",
       "path": "apps/browser/src/components/import/ImportWindow.tsx"
     },
     {
       "mode": "100644",
-      "blob": "21cd9e42e8789faec96e38ad626eed56bd458d0b",
+      "blob": "e1a862de258fc65b5c959d7fb1029fd96573379e",
       "path": "apps/browser/src/components/import/apply.ts"
     },
     {
@@ -2034,7 +2041,7 @@
     },
     {
       "mode": "100644",
-      "blob": "dd1e25c251173db754d64d990a6c0faab2808d5f",
+      "blob": "10d3693bb585d08ba76f022f53419eb35897b0f1",
       "path": "apps/browser/src/components/layout/SidebarDock.tsx"
     },
     {
@@ -2054,7 +2061,7 @@
     },
     {
       "mode": "100644",
-      "blob": "0759898d13a45aa910acecb6e3ce5e0e0ff3a0ba",
+      "blob": "9e0ea43667e2c4136523f317e65477517ce0dd18",
       "path": "apps/browser/src/components/layout/TopTabStrip.tsx"
     },
     {
@@ -2079,7 +2086,7 @@
     },
     {
       "mode": "100644",
-      "blob": "75f623f7595ab1e2b3dea8e0e67cc9894c999db9",
+      "blob": "523d085ec1eb6d71d52bb6d3027828fe4f71e3e5",
       "path": "apps/browser/src/components/layout/dockMotion.ts"
     },
     {
@@ -2119,6 +2126,11 @@
     },
     {
       "mode": "100644",
+      "blob": "2b299a08dd098f47e2b3e4bbd1915b99bdad4407",
+      "path": "apps/browser/src/components/layout/peekHold.ts"
+    },
+    {
+      "mode": "100644",
       "blob": "f86da10a958d7b422fdde8d8a3519268ed9f9c5c",
       "path": "apps/browser/src/components/layout/pinHandoff.ts"
     },
@@ -2139,6 +2151,11 @@
     },
     {
       "mode": "100644",
+      "blob": "fe641d754d28ba686370aba7e324348d54c403dd",
+      "path": "apps/browser/src/components/layout/stripAim.test.mjs"
+    },
+    {
+      "mode": "100644",
       "blob": "45000a3e03423d4cecffa2108ae1e16905cf144d",
       "path": "apps/browser/src/components/layout/stripFolderMenu.ts"
     },
@@ -2149,7 +2166,7 @@
     },
     {
       "mode": "100644",
-      "blob": "2aee9c9c27f2140cdce55ad6daae6a07ae7a690e",
+      "blob": "ae2e559361cfa9a0db41ba84e116f1c49be42066",
       "path": "apps/browser/src/components/layout/stripGroups.ts"
     },
     {
@@ -2184,7 +2201,7 @@
     },
     {
       "mode": "100644",
-      "blob": "dd43883919628a84fba26fe01d21e9acb87ddd96",
+      "blob": "c1b5a43919ea1ccf09d87e3a2ed774eda35b5c15",
       "path": "apps/browser/src/components/layout/usePeek.ts"
     },
     {
@@ -2214,7 +2231,7 @@
     },
     {
       "mode": "100644",
-      "blob": "9e1ae4f9ecde8e5c259f248a42cc8c88182cf8e5",
+      "blob": "d1801ec1cadb8cafe1aed86955a5bd2743fdcb6a",
       "path": "apps/browser/src/components/littleArdia/actions.ts"
     },
     {
@@ -2229,7 +2246,7 @@
     },
     {
       "mode": "100644",
-      "blob": "9c610b0fee6dd27469bb334c5136503ec5ac8f16",
+      "blob": "060e2600a6123f487c99318d1f844fe34585bf08",
       "path": "apps/browser/src/components/live/LiveItemCard.tsx"
     },
     {
@@ -2494,7 +2511,7 @@
     },
     {
       "mode": "100644",
-      "blob": "3dabc6baef9de7fa9731a63bf8f624ca0cec3233",
+      "blob": "a8e1f925897c5f15ce1927aaf894dcd8be9cb2eb",
       "path": "apps/browser/src/components/onboarding/steps.tsx"
     },
     {
@@ -2624,7 +2641,7 @@
     },
     {
       "mode": "100644",
-      "blob": "68e9829043dd00460ef67b8d34ae177edd88a51a",
+      "blob": "6b8fee0a5de7c4b9c6ee4dfafde963afd938d239",
       "path": "apps/browser/src/components/settings/ThemeEditor.tsx"
     },
     {
@@ -2689,7 +2706,7 @@
     },
     {
       "mode": "100644",
-      "blob": "add804f7082fc32980b46e2214c30baf62306c44",
+      "blob": "78d6646e418f023ae4f36d031d79e7eb3816ad28",
       "path": "apps/browser/src/components/settings/panes/Profiles.tsx"
     },
     {
@@ -2859,17 +2876,17 @@
     },
     {
       "mode": "100644",
-      "blob": "fb8f25e8169f2ddc9010779cada8f2cacd782f2c",
+      "blob": "eaec5cd87b2c740ee8eaa5d37d8dea1815e97d67",
       "path": "apps/browser/src/components/sidebar/actions.ts"
     },
     {
       "mode": "100644",
-      "blob": "55cfa192969ed21db619a7fea572bf7f9b9be91c",
+      "blob": "5e409bcc085047901284f4ccbcbc7d2a622e91df",
       "path": "apps/browser/src/components/sidebar/commands.ts"
     },
     {
       "mode": "100644",
-      "blob": "d300f0043083312ad45d6993592b09a77130dfb6",
+      "blob": "4db34dcf644bafcf54a41f2b3f9cca4b7cc4e869",
       "path": "apps/browser/src/components/sidebar/dnd.tsx"
     },
     {
@@ -2904,7 +2921,7 @@
     },
     {
       "mode": "100644",
-      "blob": "6fa125021f6541cbc75a8cd53151e1e818b8c525",
+      "blob": "8e88a9b29b7a1fe4bbd095b180b25146ec13aa33",
       "path": "apps/browser/src/components/sidebar/hover.ts"
     },
     {
@@ -2939,7 +2956,7 @@
     },
     {
       "mode": "100644",
-      "blob": "7f1b1ac3c6e7ece95e26e1768a4822cb6c2142ad",
+      "blob": "b9adb58ac757cce09b73625badcb32d40df3b4e3",
       "path": "apps/browser/src/components/sidebar/menus.ts"
     },
     {
@@ -2999,7 +3016,7 @@
     },
     {
       "mode": "100644",
-      "blob": "8bd259e1918f073bad79cf351000cf05a8ae65e2",
+      "blob": "4460a0c090fff17e4f34018338724e9ec1464ddd",
       "path": "apps/browser/src/components/site/Prompts.tsx"
     },
     {
@@ -3029,7 +3046,7 @@
     },
     {
       "mode": "100644",
-      "blob": "0957f2dbadbbbf34ac1f7089ef2330b56d525705",
+      "blob": "c2ba3b7a7b0030640398c448c57cb1c7c5683ae2",
       "path": "apps/browser/src/components/site/ZoomControls.tsx"
     },
     {
@@ -3229,7 +3246,7 @@
     },
     {
       "mode": "100644",
-      "blob": "4f3d09abf0c4dc394bfd0b262eadeb9fe70b35f4",
+      "blob": "6ab631458d788e57ff3995e3068c808d3206f0aa",
       "path": "apps/browser/src/lib/native.ts"
     },
     {
@@ -3284,7 +3301,7 @@
     },
     {
       "mode": "100644",
-      "blob": "edf4ba06c8d0d8a603a11161495ea590c71bc2f4",
+      "blob": "113e499b4de8211cd11834eaf8be97860a4104f9",
       "path": "apps/browser/src/lib/profileTheme.ts"
     },
     {
@@ -3419,7 +3436,7 @@
     },
     {
       "mode": "100644",
-      "blob": "376ca6047c66eb2625a3a1e701635363dfe05a51",
+      "blob": "98f0aefbefe34c3e5b7d0355417110492eaa810c",
       "path": "apps/browser/src/live/engine.ts"
     },
     {
@@ -3549,7 +3566,7 @@
     },
     {
       "mode": "100644",
-      "blob": "2fb395d4955cbbbc69cb63fc8a8ad84f5095fe07",
+      "blob": "6c2774a9a9b727820e838aead05c5e3efa52d0fc",
       "path": "apps/browser/src/store/browser.ts"
     },
     {
@@ -3639,7 +3656,7 @@
     },
     {
       "mode": "100644",
-      "blob": "8a86ac2c91c05eebf2c97e06ea12a66156d669ef",
+      "blob": "443cf67fcffabbd41ff0499119ccc8d2c046e95b",
       "path": "apps/browser/src/store/newTabBar.ts"
     },
     {
@@ -3649,7 +3666,7 @@
     },
     {
       "mode": "100644",
-      "blob": "f58a2ecc6018df60f69db7426e9f4b908237f4a0",
+      "blob": "1215ae924fdc220a1ee027dc047f9648d041780e",
       "path": "apps/browser/src/store/organize.ts"
     },
     {
@@ -3729,7 +3746,7 @@
     },
     {
       "mode": "100644",
-      "blob": "880b46b62c6aab6aa32914310624198520944f3f",
+      "blob": "b14539264187143e17f7104d09e3572c2e81c2fc",
       "path": "apps/browser/src/store/privacy.test.mjs"
     },
     {
@@ -3819,7 +3836,7 @@
     },
     {
       "mode": "100644",
-      "blob": "285fb842e2f457be0310deceffa8ca9c88d3d82e",
+      "blob": "33d00462ca3c23db2b4ed740a0966169d6adb7af",
       "path": "apps/browser/src/store/types.ts"
     },
     {
@@ -3829,7 +3846,7 @@
     },
     {
       "mode": "100644",
-      "blob": "93350a9c5d303e1ace70a3ea484499be15ac1db2",
+      "blob": "a0eb32874ad13e8f0f1e34555a2caa51dfd11300",
       "path": "apps/browser/src/store/windows.ts"
     },
     {
@@ -6009,7 +6026,7 @@
     },
     {
       "mode": "100644",
-      "blob": "958fb744547655b467b2e8eed9ccc7aa68daa87c",
+      "blob": "bbb0c5e3017b2330fbbb2fe4d06084c87542255f",
       "path": "docs/dia-feature-parity.md"
     },
     {
@@ -6019,7 +6036,7 @@
     },
     {
       "mode": "100644",
-      "blob": "e36107768bb8a465ad8139996c2ef13b9b7e9216",
+      "blob": "b23c7d597eb105ff860c801ac85da8b61e18fd25",
       "path": "docs/engine-build.md"
     },
     {
@@ -6494,6 +6511,11 @@
     },
     {
       "mode": "100644",
+      "blob": "20fc1a8428cb01460b3f1b9ad7af0634fd0089fe",
+      "path": "docs/release-notes/0.2.40-nightly.8.md"
+    },
+    {
+      "mode": "100644",
       "blob": "eb5ba12f56a65b12bb750a9cc0bae61a67c6baab",
       "path": "docs/release-notes/0.2.5.md"
     },
@@ -6549,7 +6571,7 @@
     },
     {
       "mode": "100644",
-      "blob": "6a0f1d509d1a0254d2c846f5469406ef17b31f2d",
+      "blob": "762b0eca76b2799cea425b1f7181c06d62d38ee8",
       "path": "docs/testing.md"
     },
     {
@@ -6909,7 +6931,7 @@
     },
     {
       "mode": "100644",
-      "blob": "1f82d3bb90ee1814560fd6011d0a8b7496e816fa",
+      "blob": "19fcf447cfc0b61ebca91700673c7e13b3ca18a8",
       "path": "engine/ardiacore/src/ardia/core/ardiacore_api.mm"
     },
     {
@@ -7269,7 +7291,7 @@
     },
     {
       "mode": "100644",
-      "blob": "83525eca33e25306594cd1965b077ae2edc39e75",
+      "blob": "b6f80eeb1ccf15ba7d3cce2e67dd8b34c233c108",
       "path": "engine/chromium/src/chrome/browser/ardia/ac_tabs.cc"
     },
     {
@@ -7599,6 +7621,11 @@
     },
     {
       "mode": "100644",
+      "blob": "ed117b1b45f47da818c7805d05ebbba3d6a6af50",
+      "path": "engine/patches/chromium-apple-passwords-host-skipped.patch"
+    },
+    {
+      "mode": "100644",
       "blob": "50ae5749ba15b1ad26ece13364457e70909ec2f2",
       "path": "engine/patches/chromium-ardia-layer.patch"
     },
@@ -7611,6 +7638,11 @@
       "mode": "100644",
       "blob": "e356b54a80a5c831366c43f00cad35be203477c3",
       "path": "engine/patches/chromium-autofill-address-bubble-window.patch"
+    },
+    {
+      "mode": "100644",
+      "blob": "11d8131dd851e3c2a1324753c0f36a2c2d9271c3",
+      "path": "engine/patches/chromium-background-instance-no-default-handlers.patch"
     },
     {
       "mode": "100644",
@@ -7874,7 +7906,7 @@
     },
     {
       "mode": "100644",
-      "blob": "392442997028cbf44815aed3045004281e50be3f",
+      "blob": "04b5f1b2c514f6debff2b600a487363b3db0c816",
       "path": "engine/patches/series"
     },
     {
@@ -8104,7 +8136,7 @@
     },
     {
       "mode": "100644",
-      "blob": "1335267119f6b09aed70b474d06722e431e064a2",
+      "blob": "0ac56050bd3260ac39e0e7eefc70d464c062b19f",
       "path": "packages/ardiacore/ios/ArdiaCoreChromeWindow.mm"
     },
     {
@@ -8134,7 +8166,7 @@
     },
     {
       "mode": "100644",
-      "blob": "37a4d794ed60840b583db85a725aa1d2288c16ab",
+      "blob": "e5f02962e7083921d25ce18841affdb5c2afaf0d",
       "path": "packages/ardiacore/ios/ArdiaCoreEngineCalls.swift"
     },
     {
@@ -8159,12 +8191,12 @@
     },
     {
       "mode": "100644",
-      "blob": "67472c18d30c400d878b99028895b7afc127d68e",
+      "blob": "59cb5e19c1e866c4909d40730542c02494e3733e",
       "path": "packages/ardiacore/ios/ArdiaCoreHost.mm"
     },
     {
       "mode": "100644",
-      "blob": "ca39461d7eb73a0799ff0cf47f3fc1115a0d96e7",
+      "blob": "f20c8f3ba61121c08ec7968778983706fba345e4",
       "path": "packages/ardiacore/ios/ArdiaCoreInternal.h"
     },
     {
@@ -8239,7 +8271,7 @@
     },
     {
       "mode": "100644",
-      "blob": "2d479dab94c4a39efd881f3b527b6a14ca81d5aa",
+      "blob": "9c5418bbf05f74df6066b42916123d09c46c8528",
       "path": "packages/ardiacore/ios/ArdiaCoreWebView.mm"
     },
     {
@@ -8269,7 +8301,7 @@
     },
     {
       "mode": "100644",
-      "blob": "5701d8a784554590fdb769dacb6658179d5a835d",
+      "blob": "80d72d010516d29c1ba6bf137ec904094866591c",
       "path": "packages/ardiacore/ios/page_script.js"
     },
     {
@@ -8279,12 +8311,12 @@
     },
     {
       "mode": "100644",
-      "blob": "b866d08bb5bbe074330c38813dbb17c914d6e698",
+      "blob": "70aee210c496517b863d81b4a514f79d079518ea",
       "path": "packages/ardiacore/prebuilt-engines.tsv"
     },
     {
       "mode": "100644",
-      "blob": "77b1feb0fd0fe494d7781b2848a5a7fd991e986d",
+      "blob": "ed871e089abe245050d3b00740f201f093262e80",
       "path": "packages/ardiacore/scripts/acceptance.mjs"
     },
     {
@@ -8434,7 +8466,7 @@
     },
     {
       "mode": "100644",
-      "blob": "e3da954b44d078ee4287bd4ba24ffef9b63f0843",
+      "blob": "df26a3e44ede0f436b1cb802f1f0196d1e87825a",
       "path": "packages/ardiacore/src/tabStrip.ts"
     },
     {
@@ -9099,7 +9131,7 @@
     },
     {
       "mode": "100644",
-      "blob": "508d1a173ef22ad125b7dbf5b7858fa3b6cb75af",
+      "blob": "076557c21d268e88be3da7cfb36c71d90f519468",
       "path": "packages/import/ios/Core/ArcSidebar.swift"
     },
     {
@@ -9244,7 +9276,7 @@
     },
     {
       "mode": "100644",
-      "blob": "8fbdd0fb09d8f4fc56c3867e12c2f373601058a5",
+      "blob": "160fda1ebb37ec556d9a59709bdff0c5c9940ec8",
       "path": "packages/import/src/index.ts"
     },
     {
@@ -9274,7 +9306,7 @@
     },
     {
       "mode": "100644",
-      "blob": "8dcefef1f06a809c1152da010f229160e2d5b070",
+      "blob": "3cddfe51aca7ff09f9cbecb31fa9da39aec339ca",
       "path": "packages/import/tests/ReviewRegressionTests.swift"
     },
     {
@@ -9314,12 +9346,12 @@
     },
     {
       "mode": "100644",
-      "blob": "298d10588aedce3f36759f85dc85d6e25f760dc6",
+      "blob": "1a6538b751f71b49939c329fefaf5f2307575f50",
       "path": "packages/shaders/ios/ShadersModule.swift"
     },
     {
       "mode": "100644",
-      "blob": "a04c2aae999924345dbe4768f45338f0ff11e36e",
+      "blob": "7e9e157149b967e90d29dfe68e88e2ab8ca04fec",
       "path": "packages/shaders/ios/WindowBackdropView.swift"
     },
     {
@@ -9334,7 +9366,7 @@
     },
     {
       "mode": "100644",
-      "blob": "aee716cf65c14f5d8c6a5490aaf0f2fb60fa60b8",
+      "blob": "99e15ff974bd3debbb50d340cbd456bf07d25aab",
       "path": "packages/shaders/src/index.tsx"
     },
     {
@@ -9379,7 +9411,7 @@
     },
     {
       "mode": "100644",
-      "blob": "fd152ffa96c9c5bd66f45a39c630d822abe70004",
+      "blob": "0b397330b803dc56284b2738b522f60ead01e694",
       "path": "packages/shell/ios/AppIcon.swift"
     },
     {
@@ -9454,22 +9486,22 @@
     },
     {
       "mode": "100644",
-      "blob": "ce875b492b0dc83ee0ac55e5dcbdd903c87adf84",
+      "blob": "76fea17f66c92a85c37e087018c09b99668483ff",
       "path": "packages/shell/ios/ShellModule.swift"
     },
     {
       "mode": "100644",
-      "blob": "b7bd16aef46e776e3e8093b5290ad8de61ce382b",
+      "blob": "6833307cbf7e9f2d8b4143ea24c1aae9423a79e9",
       "path": "packages/shell/ios/System.swift"
     },
     {
       "mode": "100644",
-      "blob": "1b92ace3a9a55c13fc4576a531aabfe5fda23573",
+      "blob": "c260d4efedcfbfdc6d415eed841cf8ace0d6e641",
       "path": "packages/shell/ios/TranslateModule.swift"
     },
     {
       "mode": "100644",
-      "blob": "c6e084c3ee3e3a325529cc6a48936943b991f634",
+      "blob": "523978435d8596affe6216a7cba6403c2a618934",
       "path": "packages/shell/ios/Updater.swift"
     },
     {
@@ -9479,7 +9511,7 @@
     },
     {
       "mode": "100644",
-      "blob": "8ef2fc12d5b69a6e9d67199739e033a29ccff966",
+      "blob": "3902669954c3ff3ab29443e525f50434893d68d0",
       "path": "packages/shell/ios/Windows.swift"
     },
     {
@@ -9504,7 +9536,7 @@
     },
     {
       "mode": "100644",
-      "blob": "0a3b8f35fc7f9c0045284f80205ef8db131ae9bf",
+      "blob": "5e2d0025fc6bb9274384e260f4e991a7fd780d59",
       "path": "packages/shell/src/index.tsx"
     },
     {
@@ -9514,7 +9546,7 @@
     },
     {
       "mode": "100644",
-      "blob": "ab84f6213a5c58cb549fa26a1b9ee0b7d963fc51",
+      "blob": "90e8980b0bab78ab84b622ed76ca38cec70f4a54",
       "path": "packages/shell/src/system.tsx"
     },
     {
@@ -9709,12 +9741,12 @@
     },
     {
       "mode": "100644",
-      "blob": "7e67e237a328701475f6085b9b3593db1986471f",
+      "blob": "d0ed0a84576b7d3e5d2e36b571537792f9f5466b",
       "path": "patches/react-native-macos@0.81.9.patch"
     },
     {
       "mode": "100644",
-      "blob": "177945ec395a90a88667834061d4aaea45856063",
+      "blob": "683615c3f83d3ffccd2151b144f410fb2000d49f",
       "path": "pnpm-lock.yaml"
     },
     {
@@ -9905,11 +9937,5 @@
     ".github/scripts/pr91-native-signing.xcconfig",
     ".github/scripts/pr91-native-source.json",
     ".github/workflows/pr91-native.yml"
-  ],
-  "nativeApiVersion": 14,
-  "engine": {
-    "tree": "88d316b82c81158dd4fa6176d269acd81c049e54",
-    "version": "0.2.40-nightly.7",
-    "archiveSHA256": "8f6a56366eec7be0d3cbf5d8132322d642b7ea16d540b229ad0ea3f8fe3a3748"
-  }
+  ]
 }

@@ -117,7 +117,7 @@ export async function openTabMenu(windowId: string, tab: Tab) {
         ? [{ id: "leaveFolder", title: "Remove from Folder", symbol: "folder.badge.minus" }]
         : [{ id: "newFolder", title: "New Folder with Tab", symbol: "folder.badge.plus" }]),
     { id: "duplicate", title: "Duplicate", symbol: "plus.square.on.square" },
-    ...(tab.pinned
+    ...(pinSection(tab) === "tile"
       ? []
       : [
           group
@@ -181,13 +181,14 @@ async function openMultiMenu(windowId: string, ids: string[]) {
   const n = ids.length;
   const tabs = ids.map((id) => s.tabs[id]!);
   const allPinned = tabs.every((t) => t.pinned);
+  const allTiles = tabs.every((t) => pinSection(t) === "tile");
   const incognito = tabs.some((t) => isIncognitoProfile(t.profileId));
   const groups = moveToGroupItems(windowId, undefined);
   const choice = await showMenu([
     { id: "pin", title: allPinned ? `Unpin ${n} Tabs` : `Pin ${n} Tabs`, symbol: allPinned ? "pin.slash" : "pin" },
     ...(tabs.every(isPinnedRow) ? [] : [{ id: "pinRows", title: `Move ${n} Tabs to Pinned Tabs`, symbol: "list.bullet" }]),
     { id: "duplicate", title: `Duplicate ${n} Tabs`, symbol: "plus.square.on.square" },
-    { id: "newGroup", title: `New Group with ${n} Tabs`, symbol: "plus.rectangle.on.rectangle", enabled: !allPinned, ...hint("n", "control", "command") },
+    { id: "newGroup", title: `New Group with ${n} Tabs`, symbol: "plus.rectangle.on.rectangle", enabled: !allTiles, ...hint("n", "control", "command") },
     ...(groups.length ? [{ id: "moveToGroup", title: "Move to Group", symbol: "rectangle.stack", children: groups }] : []),
     ...(tabs.some((t) => groupOf(s, t.id)) ? [{ id: "ungroup", title: "Remove from Group", symbol: "folder.badge.minus" }] : []),
     sep,

@@ -4,7 +4,7 @@ import { changedIds } from "./changes";
 import { createGroupsSlice, settleNesting, type GroupsSlice } from "./groups";
 import { createHistorySlice, type HistorySlice } from "./history";
 import { IDLE_LIVE, isIncognitoProfile, pinnedFirst } from "./model";
-import { createOrganizeSlice, forgetClosedPrivateWindows, keptDeletedGroups, livePinTable, notePinChoices, type OrganizeSlice } from "./organize";
+import { createOrganizeSlice, forgetClosedPrivateWindows, keptCleanedTabs, keptDeletedGroups, livePinTable, notePinChoices, type OrganizeSlice } from "./organize";
 import { createPeekSlice, settlePeeks, type PeekSlice } from "./peek";
 import { mirrorPins } from "./pinMirror";
 import { settleSharedPins } from "./pinShare";
@@ -165,7 +165,7 @@ export const useBrowser = create<BrowserState>()(transactions.middleware(batched
       pinSync: Object.fromEntries(Object.entries(data.pinSync ?? {}).filter(([p]) => profiles[p])),
       closedGroups: data.closedGroups ?? [],
       deletedGroups: keptDeletedGroups(data.deletedGroups ?? []),
-      cleanedTabs: (data.cleanedTabs ?? []).filter((c) => !isIncognitoProfile(c.tab.profileId)),
+      cleanedTabs: keptCleanedTabs((data.cleanedTabs ?? []).filter((c) => !isIncognitoProfile(c.tab.profileId))),
       privateCleanedTabs: {},
       privateSiteMutes: {},
       selection: {},

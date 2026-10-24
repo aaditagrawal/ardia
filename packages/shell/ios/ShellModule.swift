@@ -4,11 +4,15 @@ import ExpoModulesCore
 
 public enum OpenURLInbox {
   static var pending: [String] = []
-  static var deliver: (([String]) -> Void)?
+  static var pendingPointer = NSPoint.zero
+  static var deliver: (([String], NSPoint) -> Void)?
 
   public static func receive(_ urls: [URL]) {
+    let pointer = NSEvent.mouseLocation
     let strings = urls.map { $0.isFileURL ? $0.absoluteString : $0.absoluteString }
-    if let deliver { deliver(strings) } else { pending += strings }
+    if let deliver { return deliver(strings, pointer) }
+    pending += strings
+    pendingPointer = pointer
   }
 }
 
@@ -292,11 +296,11 @@ public class ShellModule: Module {
 
     OnStartObserving("onOpenURLs") {
       DispatchQueue.main.async { [weak self] in
-        OpenURLInbox.deliver = { urls in self?.sendEvent("onOpenURLs", ["urls": urls]) }
+        OpenURLInbox.deliver = { urls, pointer in self?.sendEvent("onOpenURLs", ["urls": urls, "pointer": [pointer.x, pointer.y]]) }
         if !OpenURLInbox.pending.isEmpty {
           let urls = OpenURLInbox.pending
           OpenURLInbox.pending = []
-          OpenURLInbox.deliver?(urls)
+          OpenURLInbox.deliver?(urls, OpenURLInbox.pendingPointer)
         }
       }
     }
@@ -313,7 +317,8 @@ public class ShellModule: Module {
         size: options["size"] as? [Double],
         behind: options["behind"] as? String,
         chromeWindow: options["chromeWindow"] as? String,
-        claim: options["claim"] as? String)
+        claim: options["claim"] as? String,
+        pointer: (options["pointer"] as? [Double]).flatMap { $0.count == 2 ? NSPoint(x: $0[0], y: $0[1]) : nil })
     }.runOnQueue(.main)
 
     AsyncFunction("closeWindow") { (id: String) in WindowManager.shared.close(id: id) }.runOnQueue(.main)

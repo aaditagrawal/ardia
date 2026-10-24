@@ -9,9 +9,9 @@ mkdir -p "$out"
 exec > >(tee -a "$out/runner.log") 2>&1
 export ARDIA_CI_OUTPUT="$out"
 export ARDIA_CI_SOURCE_SHA=$(git rev-parse HEAD)
-export ARDIA_CI_ENGINE_TREE=88d316b82c81158dd4fa6176d269acd81c049e54
-export ARDIA_CI_ENGINE_VERSION=0.2.40-nightly.7
-export ARDIA_CI_ENGINE_SHA256=8f6a56366eec7be0d3cbf5d8132322d642b7ea16d540b229ad0ea3f8fe3a3748
+export ARDIA_CI_ENGINE_TREE=6b96c16ab2ccc3b93ee28278ec0ed495aad7009a
+export ARDIA_CI_ENGINE_VERSION=0.2.40-nightly.8
+export ARDIA_CI_ENGINE_SHA256=f3a4b15b5254285b2d718040946e569971742d7a9c8378e55d78b6818889688c
 export ARDIA_CI_ENGINE_VERIFIED=false
 export ARDIA_CI_CODESIGN_EXIT=not-run
 export ARDIA_CI_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -92,7 +92,7 @@ export ARDIACORE_PREBUILT_REPO=mantrakp04/ardia
 export ARDIACORE_PREBUILT_ASSETS=https://github.com/mantrakp04/ardia/releases/download
 ARDIACORE_FRAMEWORK=$(packages/ardiacore/scripts/fetch-engine.sh 2> >(tee "$out/engine.log" >&2))
 export ARDIACORE_FRAMEWORK
-[[ "$ARDIACORE_FRAMEWORK" == "$repo/apps/browser/build-ardiacore/prebuilt/88d316b82c81/Chromium Framework.framework" ]]
+[[ "$ARDIACORE_FRAMEWORK" == "$repo/apps/browser/build-ardiacore/prebuilt/6b96c16ab2cc/Chromium Framework.framework" ]]
 [[ -f "$ARDIACORE_FRAMEWORK/Versions/Current/Chromium Framework" ]]
 export ARDIA_CI_ENGINE_VERIFIED=true
 

@@ -26,7 +26,6 @@ const DROPDOWN_PAST_FIELD = 137;
 const DROPDOWN_RADIUS = 12;
 const PANEL_OPEN_HEIGHT = 107;
 const CENTRED_TOP_SHARE = 0.22;
-const CENTRED_START_SCALE = 0.96;
 
 const GROW_MS = 130;
 const GROW_EASING = Easing.out(Easing.exp);
@@ -112,17 +111,11 @@ function CentredBar({ windowId, tabId, target, card }: { windowId: string; tabId
   const width = barWidth(card.width);
   const left = card.left + (card.width - width) / 2;
   const top = card.top + Math.max(WINDOW_MARGIN, Math.round(card.height * CENTRED_TOP_SHARE));
-  const from = {
-    left: left + (width * (1 - CENTRED_START_SCALE)) / 2,
-    top: top + (PANEL_OPEN_HEIGHT * (1 - CENTRED_START_SCALE)) / 2,
-    width: width * CENTRED_START_SCALE,
-    height: PANEL_OPEN_HEIGHT * CENTRED_START_SCALE,
-  };
   const onCancel = () => useBrowser.getState().closePanel(windowId);
   const onDone = () => closeNewTabBar(windowId);
   return (
     <Grow
-      from={from}
+      from={null}
       frame={{ left, top, width }}
       openHeight={PANEL_OPEN_HEIGHT}
       radius={PANEL_RADIUS}

@@ -33,7 +33,7 @@ jobs:
         with:
           bun-version: '1.4.4'
           no-cache: true
-      - name: Build and verify bundled native Debug API14 app
+      - name: Build and verify bundled native Debug app
         timeout-minutes: 55
         env:
           ARDIA_CI_OUTPUT: ${{ runner.temp }}/ardia-pr91-native-ci
