@@ -533,6 +533,10 @@ function DownloadsButton({ windowId }: { windowId: string }) {
 }
 
 const CLIPPED = { marginTop: -layout.rowGap, paddingTop: layout.rowGap, overflow: "hidden" } as const;
+const NEW_TAB_LABEL_X = 30;
+const CLEANED_HINT_RIGHT = 30;
+const CLEANED_HINT_GAP = 8;
+const MEASURE_OFFSCREEN = { position: "absolute", width: 1000, height: 0, overflow: "hidden", opacity: 0 } as const;
 
 const NewTabRow = memo(function NewTabRow({ windowId, shift = null, clip = null }: { windowId: string; shift?: Animated.Value | null; clip?: ClipSource | null }) {
   const theme = useTheme();
@@ -542,8 +546,25 @@ const NewTabRow = memo(function NewTabRow({ windowId, shift = null, clip = null 
   const [moved, movedRef] = useShift(shift);
   const [movedButtons, movedButtonsRef] = useShift(shift);
   const clipped = useClipped(clip);
+  const [widths, setWidths] = useState({ row: 0, label: 0, hint: 0 });
+  const measure = (key: keyof typeof widths) => (e: LayoutChangeEvent) => {
+    const width = Math.ceil(e.nativeEvent.layout.width);
+    setWidths((w) => (w[key] === width ? w : { ...w, [key]: width }));
+  };
+  const hint = `${cleaned} cleaned`;
+  const hintFits = widths.hint > 0 && NEW_TAB_LABEL_X + widths.label + CLEANED_HINT_GAP + widths.hint <= widths.row - CLEANED_HINT_RIGHT;
   return (
-    <View {...hoverProps} style={[{ flexDirection: "row", alignItems: "center" }, clipped ? CLIPPED : null]}>
+    <View {...hoverProps} onLayout={measure("row")} style={[{ flexDirection: "row", alignItems: "center" }, clipped ? CLIPPED : null]}>
+      <View pointerEvents="none" style={MEASURE_OFFSCREEN}>
+        <Text numberOfLines={1} style={{ alignSelf: "flex-start", fontSize: 13 }} onLayout={measure("label")}>
+          New Tab
+        </Text>
+        {cleaned > 0 ? (
+          <Text numberOfLines={1} style={{ alignSelf: "flex-start", fontSize: 11 }} onLayout={measure("hint")}>
+            {hint}
+          </Text>
+        ) : null}
+      </View>
       <Pressable
         style={{ flex: 1 }}
         onPress={(e) => {
@@ -574,7 +595,7 @@ const NewTabRow = memo(function NewTabRow({ windowId, shift = null, clip = null 
         )}
       </Pressable>
       <View {...movedButtons} ref={movedButtonsRef} style={[{ position: "absolute", right: 6, flexDirection: "row", alignItems: "center" }, movedButtons.style as object]}>
-        <HoverSlot hovered={hovered && cleaned > 0} width={0} hover={<Text style={{ fontSize: 11, color: theme.textTertiary, marginRight: 2 }}>{cleaned} cleaned</Text>} />
+        <HoverSlot hovered={hovered && cleaned > 0 && hintFits} width={0} hover={<Text style={{ fontSize: 11, color: theme.textTertiary, marginRight: 2 }}>{hint}</Text>} />
         <IconButton
           icon="chevron.down"
           size={10}

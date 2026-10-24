@@ -354,7 +354,8 @@ class DragController {
     const { columns, width } = pinGrid(total, tiles.w);
     const mid = tiles.x + (slot % columns) * (width + TILE_GAP) + width / 2;
     const top = tiles.y + Math.floor(slot / columns) * PIN_SLOT;
-    const centre = folders && Math.abs(x - mid) < width * 0.3 && Math.abs(y - (top + layout.pinnedHeight / 2)) < layout.pinnedHeight * 0.35;
+    const reach = this.holdReady === cell.key ? 0.45 : 0.3;
+    const centre = folders && Math.abs(x - mid) < width * reach && Math.abs(y - (top + layout.pinnedHeight / 2)) <= (layout.pinnedHeight + TILE_GAP) / 2;
     return { cell, index, gap, part: centre ? "centre" : x < mid ? "before" : "after" };
   }
 
@@ -537,14 +538,14 @@ class DragController {
         const before = members.find((m) => cy(m) > y);
         drop = nestAt(hit.g.groupId!, firstTab(before));
         gapKey = before?.key ?? `tail:group:${hit.g.groupId}`;
+      } else if ((onto = tabsDrag && !this.external ? this.ontoTarget(live, y, this.overPinnedRows(y) ? "pinnedRows" : "list") : null)) {
+        drop = { type: "onto", targetId: this.items.get(onto)!.tabIds[0]! };
+        gapKey = this.gapKey;
+        pitch = this.pitch;
       } else if (tabsDrag && this.overPinnedRows(y)) {
         const { before, beforeId, sequence } = pinnedAt();
         drop = { type: "tabs", placement: { pinned: true, row: true, beforeId, ...(beforeId ? {} : { last: true }) }, sequence };
         gapKey = before?.key ?? "tail:pinnedGroups";
-      } else if ((onto = tabsDrag && !this.external ? this.ontoTarget(live, y) : null)) {
-        drop = { type: "onto", targetId: this.items.get(onto)!.tabIds[0]! };
-        gapKey = this.gapKey;
-        pitch = this.pitch;
       } else if ((source.kind === "group" || source.kind === "live") && inPinned) {
         const { before, beforeId, sequence } = pinnedAt();
         drop = source.kind === "live" ? { type: "live", sequence } : { type: "group", placement: { pinned: true, parentId: null, beforeId }, sequence };
@@ -619,9 +620,9 @@ class DragController {
     return { ...f, y: f.y + dy, h: f.h + dh };
   }
 
-  private ontoTarget(live: Item[], y: number): string | null {
+  private ontoTarget(live: Item[], y: number, section: "list" | "pinnedRows"): string | null {
     for (const i of live) {
-      if (i.kind !== "row" || i.parentGroup || i.section !== "list") continue;
+      if (i.kind !== "row" || i.parentGroup || i.section !== section) continue;
       const f = this.shown(i);
       if (y > f.y + f.h * 0.25 && y < f.y + f.h * 0.75) return i.key;
     }

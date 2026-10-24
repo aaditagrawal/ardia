@@ -34,6 +34,7 @@ export type CreateWindowOptions = {
   tabIds?: string[];
   frame?: Frame | null;
   small?: boolean;
+  linkPointer?: [number, number];
   background?: boolean;
   chromeWindow?: string;
 };
@@ -139,6 +140,7 @@ export const createWindowsSlice: StateCreator<BrowserState, [], [], WindowsSlice
       : (known ?? (small ? lastActiveProfile(s) : s.settings.defaultProfileId));
     const w = small ? smallWindow(id, profileId) : emptyWindow(id, profileId, !!o.incognito, o.frame ?? null);
     if (original !== undefined) w.originalProfileId = original;
+    if (small && o.linkPointer) w.linkPointer = o.linkPointer;
     if (o.chromeWindow && !small) w.chromeWindow = o.chromeWindow;
     let next = withWindow(s, w);
     if (o.tabIds?.length && !small) next = moveTabsInto(next, o.tabIds, id);

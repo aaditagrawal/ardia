@@ -1,6 +1,6 @@
 import type { BrowserCommand, MenuEntry } from "@ardia/shell";
 import { useBrowser, type BrowserState } from "../../store/browser";
-import { activeTabId, plural } from "../../store/model";
+import { activeTabId, pinSection, plural } from "../../store/model";
 import { awayFromPin, groupOf, selectedTabIds } from "../../store/organize";
 import { newGroupWithSelection, openIconPicker, startRename } from "./actions";
 import { closeAllTabs } from "./menus";
@@ -64,7 +64,7 @@ export function sidebarMenuState(s: BrowserState, windowId: string | undefined) 
   else {
     if (!tab || !awayFromPin(tab)) disabled.push("returnToPinnedUrl");
     titles.togglePinnedRow = movePinnedTitle(tab);
-    const selected = selectedTabIds(s, windowId).filter((id) => !s.tabs[id]?.pinned);
+    const selected = selectedTabIds(s, windowId).filter((id) => pinSection(s.tabs[id]) !== "tile");
     if (!selected.length) disabled.push("newGroupWithTabs");
     if (selected.length > 1) titles.newGroupWithTabs = `New Group with ${plural(selected.length, "Tab")}`;
   }

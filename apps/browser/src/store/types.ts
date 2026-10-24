@@ -45,6 +45,7 @@ export type BrowserWindow = {
   frame: Frame | null;
   createdAt: number;
   kind?: "small";
+  linkPointer?: [number, number];
   originalProfileId?: string;
   chromeWindow?: string;
 };
