@@ -9,9 +9,9 @@ mkdir -p "$out"
 exec > >(tee -a "$out/runner.log") 2>&1
 export ARDIA_CI_OUTPUT="$out"
 export ARDIA_CI_SOURCE_SHA=$(git rev-parse HEAD)
-export ARDIA_CI_ENGINE_TREE=2c67e141131843cf5c74c72f67378e891810a46b
-export ARDIA_CI_ENGINE_VERSION=0.2.40-nightly.5
-export ARDIA_CI_ENGINE_SHA256=8177d5324bef7f5e371bbc6b4fdc857b11605350772186b4ab0d4f8b7dcf8e62
+export ARDIA_CI_ENGINE_TREE=88d316b82c81158dd4fa6176d269acd81c049e54
+export ARDIA_CI_ENGINE_VERSION=0.2.40-nightly.7
+export ARDIA_CI_ENGINE_SHA256=8f6a56366eec7be0d3cbf5d8132322d642b7ea16d540b229ad0ea3f8fe3a3748
 export ARDIA_CI_ENGINE_VERIFIED=false
 export ARDIA_CI_CODESIGN_EXIT=not-run
 export ARDIA_CI_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -86,7 +86,7 @@ export ARDIACORE_PREBUILT_REPO=mantrakp04/ardia
 export ARDIACORE_PREBUILT_ASSETS=https://github.com/mantrakp04/ardia/releases/download
 ARDIACORE_FRAMEWORK=$(packages/ardiacore/scripts/fetch-engine.sh 2> >(tee "$out/engine.log" >&2))
 export ARDIACORE_FRAMEWORK
-[[ "$ARDIACORE_FRAMEWORK" == "$repo/apps/browser/build-ardiacore/prebuilt/2c67e1411318/Chromium Framework.framework" ]]
+[[ "$ARDIACORE_FRAMEWORK" == "$repo/apps/browser/build-ardiacore/prebuilt/88d316b82c81/Chromium Framework.framework" ]]
 [[ -f "$ARDIACORE_FRAMEWORK/Versions/Current/Chromium Framework" ]]
 export ARDIA_CI_ENGINE_VERIFIED=true
 
@@ -118,6 +118,7 @@ printf '%s\n' "${debug_code#"$app"/}" > "$out/debug-code-image.txt"
 LC_ALL=C /usr/bin/strings -a "$debug_code" | \
   awk '/devLeftEdgePointer/ { pointer = 1 } /devLeftEdgeStats/ { stats = 1 } END { print "devLeftEdgePointer=" pointer + 0; print "devLeftEdgeStats=" stats + 0; exit !(pointer && stats) }' \
   > "$out/debug-hooks.txt"
+bun "$here/pr91-native-sign.mjs" "$app" "${debug_code#"$app"/}"
 codesign -dvv "$app" > "$out/codesign-details.txt" 2>&1
 if codesign --verify --deep --strict --verbose=2 "$app" > "$out/codesign-verify.txt" 2>&1; then
   export ARDIA_CI_CODESIGN_EXIT=0
@@ -132,4 +133,5 @@ bun "$here/pr91-native-manifest.mjs" --pod-lock
 if [[ "$ARDIA_CI_CODESIGN_EXIT" != 0 ]]; then
   exit 1
 fi
+bun "$here/pr91-native-manifest.mjs" --working-source
 export ARDIA_CI_PHASE=complete

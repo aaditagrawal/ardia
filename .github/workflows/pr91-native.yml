@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  actions: read
 
 jobs:
   native-debug:
@@ -23,38 +22,28 @@ jobs:
       RCT_NEW_ARCH_ENABLED: '0'
       DEVELOPER_DIR: /Applications/Xcode_27.app/Contents/Developer
     steps:
-      - name: Check out verification snapshot
+      - name: Check out merged source snapshot
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: aaditagrawal/ardia
           ref: ${{ github.sha }}
-          fetch-depth: 2
           persist-credentials: false
       - name: Set up Bun 1.4.4
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
           bun-version: '1.4.4'
           no-cache: true
-      - name: Download compiled native Debug artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: ardia-pr91-native-debug-1ac6e39a726aa1641d485e43fb3e93e225af3829
-          repository: aaditagrawal/ardia
-          run-id: 40001748058
-          github-token: ${{ github.token }}
-          path: ${{ runner.temp }}/ardia-pr91-native-input
-      - name: Repair signatures and verify compiled Debug app
-        timeout-minutes: 20
+      - name: Build and verify bundled native Debug API14 app
+        timeout-minutes: 55
         env:
           ARDIA_CI_OUTPUT: ${{ runner.temp }}/ardia-pr91-native-ci
-          ARDIA_CI_INPUT: ${{ runner.temp }}/ardia-pr91-native-input
-        run: bun .github/scripts/pr91-native-repackage.mjs
+        run: bash .github/scripts/pr91-native-build.sh
       - name: Preserve app, provenance and logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: ardia-pr91-native-debug-${{ github.sha }}
           path: ${{ runner.temp }}/ardia-pr91-native-ci/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 3
           compression-level: 0

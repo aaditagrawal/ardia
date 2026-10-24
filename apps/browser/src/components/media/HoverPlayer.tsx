@@ -5,7 +5,7 @@ import { clickTab } from "../sidebar/actions";
 import { cardHoverProps, dismissHover } from "../sidebar/hover";
 import { useSidebarOnRight } from "../layout/windowLayout";
 import { hoverCardOrigin } from "../sidebar/hoverMotion";
-import { measureRow, setSidebarUi, type Anchor } from "../sidebar/state";
+import { measureForHover, setSidebarUi, type Anchor } from "../sidebar/state";
 import { MINI_PLAYER_HEIGHT, MINI_PLAYER_WIDTH, MiniPlayer } from "./MiniPlayer";
 import { useMedia } from "./state";
 import { useMediaTokens } from "./tokens";
@@ -50,8 +50,8 @@ export function HoverPlayer({ tabId, windowId, anchor, edge }: { tabId: string; 
 if (__DEV__) {
   (globalThis as { acMediaHover?: unknown }).acMediaHover = async (windowId: string, tabId: string | null) => {
     if (!tabId) return setSidebarUi({ hover: null });
-    const anchor = await measureRow(windowId, tabId);
-    if (anchor) setSidebarUi({ hover: { windowId, kind: "tab", id: tabId, anchor } });
-    return anchor;
+    const measured = await measureForHover(windowId, tabId);
+    if (measured) setSidebarUi({ hover: { windowId, kind: "tab", id: tabId, ...measured } });
+    return measured?.anchor ?? null;
   };
 }

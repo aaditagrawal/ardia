@@ -11,23 +11,23 @@ let stopWatching: (() => void) | null = null;
 
 const windowFrame = () => document.querySelector<HTMLElement>(WINDOW_SELECTOR)?.getBoundingClientRect() ?? null;
 
-function isOver(pointer: PointerSample | null, hold: number, right: boolean) {
+function isOver(pointer: PointerSample | null, { hold, right }: { hold: number; right: boolean }) {
   const frame = windowFrame();
   if (!frame || !pointer || document.fullscreenElement) return false;
   const x = pointer.clientX;
   const y = pointer.clientY;
   if (y < frame.top || y >= frame.bottom) return false;
+  const screen = document.documentElement.clientWidth;
   if (right ? x >= frame.right - hold && x < frame.right : x >= frame.left && x < frame.left + hold) return true;
-  const screenRight = document.documentElement.clientWidth;
-  if (!(right ? x >= frame.right && x < Math.min(screenRight, frame.right + REACH) : x < frame.left && x >= Math.max(0, frame.left - REACH))) return false;
-  return document.hasFocus() || (right ? screenRight - frame.right : frame.left) <= REACH;
+  if (!(right ? x >= frame.right && x < Math.min(screen, frame.right + REACH) : x < frame.left && x >= Math.max(0, frame.left - REACH))) return false;
+  return document.hasFocus() || (right ? screen - frame.right : frame.left) <= REACH;
 }
 
 function check(pointer: PointerSample | null = currentPointer()) {
   const frame = windowFrame();
   for (const [id, edge] of [...watched]) {
     if (!watched.has(id)) continue;
-    const now = isOver(pointer, edge.hold, edge.right);
+    const now = isOver(pointer, edge);
     const fresh = unreported.delete(id);
     if (!fresh && now === over.has(id)) continue;
     if (now) over.add(id);

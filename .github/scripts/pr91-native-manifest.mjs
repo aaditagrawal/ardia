@@ -42,19 +42,25 @@ if (process.argv.includes('--relocate-pod-lock')) {
   if (readFileSync(lockPath, 'utf8') !== expected) throw new Error('Unexpected Podfile.lock change');
   const installedManifest = 'apps/browser/macos/Pods/Manifest.lock';
   if (readFileSync(installedManifest, 'utf8') !== expected) throw new Error('Installed Pods manifest does not match the verified lock');
+} else if (process.argv.includes('--working-source')) {
+  const changed = execFileSync('git', ['diff', '--name-only'], { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
+  if (changed.some(path => path !== lockPath)) throw new Error('Tracked sources changed during the build: ' + changed.join(', '));
 } else if (process.argv.includes('--source')) {
   const snapshot = JSON.parse(readFileSync(join(import.meta.dirname, 'pr91-native-source.json'), 'utf8'));
-  for (const file of snapshot.files) {
-    const blob = execFileSync('git', ['rev-parse', 'HEAD:' + file.path], { encoding: 'utf8' }).trim();
-    if (blob !== file.blob) throw new Error('Snapshot source blob mismatch: ' + file.path);
-  }
+  const rootEntries = execFileSync('git', ['ls-tree', 'HEAD'], { encoding: 'utf8' }).split('\n').filter(line => line && !line.endsWith('\t.github')).join('\n') + '\n';
+  const sourceTree = execFileSync('git', ['mktree'], { encoding: 'utf8', input: rootEntries }).trim();
+  if (sourceTree !== snapshot.sourceTree) throw new Error('Full merged source tree mismatch');
+  const committed = execFileSync('git', ['ls-tree', '-r', '-z', 'HEAD'], { encoding: 'utf8' }).split('\0').filter(Boolean).map(entry => { const match = entry.match(/^(\d+) blob ([a-f0-9]{40})\t([\s\S]+)$/); if (!match) throw new Error('Unexpected tree entry'); return { mode: match[1], blob: match[2], path: match[3] }; });
+  const sourceFiles = committed.filter(file => !snapshot.ciOnlyPaths.includes(file.path));
+  if (JSON.stringify(sourceFiles) !== JSON.stringify(snapshot.files)) throw new Error('Full tracked source snapshot differs');
+  if (committed.length !== snapshot.files.length + snapshot.ciOnlyPaths.length) throw new Error('Unexpected CI overlay paths');
   const nativeSource = readFileSync('packages/shell/ios/AppModule.swift', 'utf8');
   const jsSource = readFileSync('apps/browser/src/nativeApi.tsx', 'utf8');
   const native = Number(nativeSource.match(/Constant\("apiVersion"\)\s*\{\s*\(\)\s*->\s*Int\s+in\s+(\d+)/)?.[1]);
   const javascript = Number(jsSource.match(/NATIVE_API_VERSION\s*=\s*(\d+)/)?.[1]);
-  if (native !== 13 || javascript !== 13) throw new Error('Native and JavaScript API versions must both be 13');
+  if (native !== 14 || javascript !== 14) throw new Error('Native and JavaScript API versions must both be 14');
   writeFileSync(join(out, 'source-snapshot.json'), JSON.stringify(snapshot, null, 2) + '\n');
-  writeFileSync(join(out, 'source-api.json'), JSON.stringify({ expected: 13, native, javascript, snapshotBlobsVerified: true, runtimeVerified: false }, null, 2) + '\n');
+  writeFileSync(join(out, 'source-api.json'), JSON.stringify({ expected: 14, native, javascript, snapshotBlobsVerified: true, runtimeVerified: false }, null, 2) + '\n');
 } else if (process.argv.includes('--settings')) {
   const settings = [...JSON.parse(readFileSync(join(out, 'settings.raw.json'), 'utf8')), ...JSON.parse(readFileSync(join(out, 'settings.shell.raw.json'), 'utf8'))];
   const filtered = settings.map(({ target, buildSettings }) => ({ target, settings: Object.fromEntries(keys.filter(key => key in buildSettings).map(key => [key, buildSettings[key]])) }));
@@ -72,12 +78,14 @@ if (process.argv.includes('--relocate-pod-lock')) {
   const file = process.argv[process.argv.indexOf('--bundle') + 1];
   const text = readFileSync(file, 'utf8');
   if (!/\b__DEV__\s*=\s*true\b/.test(text)) throw new Error('Bundled JavaScript does not declare __DEV__=true');
-  writeFileSync(join(out, 'bundle-validation.json'), JSON.stringify({ dev: true, metroSourceBundleSHA256: createHash('sha256').update(text).digest('hex'), bundledRuntimeVerified: false }, null, 2) + '\n');
+  if (!/\bNATIVE_API_VERSION\s*=\s*(?:[A-Za-z_$][\w$]*\.NATIVE_API_VERSION\s*=\s*)?14\b/.test(text)) throw new Error('Metro source bundle does not contain API14');
+  writeFileSync(join(out, 'bundle-validation.json'), JSON.stringify({ dev: true, nativeApiVersion: 14, metroSourceBundleSHA256: createHash('sha256').update(text).digest('hex'), bundledRuntimeVerified: false }, null, 2) + '\n');
 } else {
   const archive = join(out, 'Ardia-pr91-native-Debug.tar.gz');
   const version = name => existsSync(join(out, name)) ? readFileSync(join(out, name), 'utf8').trim() : null;
   const manifest = {
     sourceGitSHA: env.ARDIA_CI_SOURCE_SHA,
+    compiledSourceTree: existsSync(join(out, 'source-snapshot.json')) ? JSON.parse(readFileSync(join(out, 'source-snapshot.json'), 'utf8')).sourceTree : null,
     sourceRepository: env.GITHUB_REPOSITORY,
     sourceRef: env.GITHUB_REF,
     runURL: env.GITHUB_SERVER_URL && env.GITHUB_REPOSITORY && env.GITHUB_RUN_ID ? env.GITHUB_SERVER_URL + '/' + env.GITHUB_REPOSITORY + '/actions/runs/' + env.GITHUB_RUN_ID : null,
@@ -89,7 +97,7 @@ if (process.argv.includes('--relocate-pod-lock')) {
     configuration: 'Debug',
     forceBundling: true,
     javascriptDev: true,
-    nativeApi: existsSync(join(out, 'source-api.json')) ? JSON.parse(readFileSync(join(out, 'source-api.json'), 'utf8')) : { expected: 13, runtimeVerified: false },
+    nativeApi: existsSync(join(out, 'source-api.json')) ? JSON.parse(readFileSync(join(out, 'source-api.json'), 'utf8')) : { expected: 14, runtimeVerified: false },
     registeredHookNamesInBinary: version('debug-hooks.txt'),
     bundledJavascript: existsSync(join(out, 'bundle-validation.json')) ? JSON.parse(readFileSync(join(out, 'bundle-validation.json'), 'utf8')) : null,
     javascriptBundleSHA256: version('main.jsbundle.sha256'),
@@ -97,8 +105,9 @@ if (process.argv.includes('--relocate-pod-lock')) {
     ciPodLockNormalization: existsSync(join(out, 'pod-lock-normalization.json')) ? JSON.parse(readFileSync(join(out, 'pod-lock-normalization.json'), 'utf8')) : null,
     buildCommand: 'scripts/agent/build-app --as pr91-native --config Debug --force --wait 120',
     signingOverrides: version('ci-signing.xcconfig'),
+    signatureNormalization: existsSync(join(out, 'signature-normalization.json')) ? JSON.parse(readFileSync(join(out, 'signature-normalization.json'), 'utf8')) : null,
     buildSettings: existsSync(settingsFile) ? JSON.parse(readFileSync(settingsFile, 'utf8')) : null,
-    tools: { xcode: version('xcode-version.txt'), sdk: version('sdk-version.txt'), node: version('node-version.txt'), bun: version('bun-version.txt'), cocoaPods: version('cocoapods-version.txt'), pnpm: '11.1.3' },
+    tools: { swift: version('swift-version.txt'), xcode: version('xcode-version.txt'), sdk: version('sdk-version.txt'), node: version('node-version.txt'), bun: version('bun-version.txt'), cocoaPods: version('cocoapods-version.txt'), pnpm: '11.1.3' },
     codesignVerification: { exitCode: env.ARDIA_CI_CODESIGN_EXIT === 'not-run' ? null : Number(env.ARDIA_CI_CODESIGN_EXIT), result: version('codesign-verify.txt') },
     archive: existsSync(archive) ? { file: 'Ardia-pr91-native-Debug.tar.gz', sha256: createHash('sha256').update(readFileSync(archive)).digest('hex') } : null,
     applicationLaunched: false

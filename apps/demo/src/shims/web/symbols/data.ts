@@ -304,6 +304,7 @@ const BODIES: readonly string[] = [
   "<path d=\"M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z\"/>",
   "<path d=\"M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z\" />",
   "<rect x=\"6.14\" y=\"6.14\" width=\"19.73\" height=\"19.73\" rx=\"2.38\"/><path d=\"M12.01 12.01L19.99 19.99\"/><path d=\"M19.99 12.01L12.01 19.99\"/>",
+  "<path d=\"M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z\" />",
 ];
 
 const ENCODED: Record<string, readonly EncodedLayer[]> = {
@@ -416,6 +417,7 @@ const ENCODED: Record<string, readonly EncodedLayer[]> = {
   "flag": [[111,24,0,1,0,[[1.1279,1.0475,0.0377,0.0244,0.0582,0,1],[1.1467,1.0375,0.0096,0.0178,0.0733,0,1],[1.1317,1.0425,0.0171,0.0103,0.0935,0,1],[1.1204,1.045,0.0209,0.0047,0.107,0,1],[1.1129,1.0475,0.0274,-0.0009,0.1228,0,1]]]],
   "flame": [[112,256,1,1,0,[[1.2244,0.96,0.0021,0.0396,0.003,0,1],[1.2244,0.96,0.0096,0.0321,0.0195,0,1],[1.2207,0.97,0.0171,0.0321,0.0368,0,1],[1.2319,0.96,0.0209,0.0565,0.039,0,1],[1.2244,0.9675,-0.0054,0.0471,0.0547,0,1]]]],
   "folder": [[113,32,0,1,0,[[1.2808,0.9975,0.0056,0.0038,0.071,0,1],[1.2733,1.0025,0.0159,0,0.077,0,1],[1.2733,1.0025,-0.0141,-0.0009,0.0845,0,1],[1.2583,1,-0.0141,-0.0131,0.1115,0,1],[1.2658,1,-0.0028,0.0188,0.125,0,1]]]],
+  "folder.fill": [[300,24,1,1,0,[[1.3217,1,0.0108,-0.0185,0.0045,0,1],[1.3217,1,0.0183,0.0152,0.012,0,1],[1.3367,0.99,-0.0183,0.004,0.0165,0,1],[1.3517,0.985,-0.0155,-0.0016,0.012,0,1],[1.3517,0.98,-0.0117,-0.0148,0.0255,0,1]]]],
   "folder.badge.minus": [[114,32,0,1,0,[[1.2856,1,-0.0678,0.0403,0.0627,0,1],[1.2838,0.9975,-0.0612,0.0338,0.0808,0,1],[1.2781,1,-0.0922,0.0263,0.0973,0,1],[1.2725,0.9975,-0.0894,0.06,0.1078,0,1],[1.2613,1,-0.0856,0.0563,0.1265,0,1]]],[115,256,1,1,0.07,[[0.5956,1,0.4453,-0.1731,0.0015,0,1],[0.6088,1,0.4491,-0.1806,0.0008,0,1],[0.6181,1,0.4125,-0.1928,0,0,1],[0.6256,1,0.4144,-0.1656,0,0,1],[0.6331,1.0025,0.4163,-0.1759,0,0,1]]]],
   "folder.badge.plus": [[116,32,0,1,0,[[1.2875,0.9975,-0.0697,0.0403,0.065,0,1],[1.2838,1.0025,-0.0612,0.0338,0.08,0,1],[1.2781,0.9975,-0.0941,0.0263,0.0965,0,1],[1.2725,1,-0.0912,0.0619,0.11,0,1],[1.265,1.0025,-0.0837,0.0563,0.1228,0,1]]],[49,256,1,1,0.07,[[0.5975,1,0.4453,-0.1731,0,0,1],[0.6106,1,0.4491,-0.1806,0,0,1],[0.6181,1.0025,0.4125,-0.1928,0,0,1],[0.6256,1,0.4144,-0.1656,0,0,1],[0.6331,1.0025,0.4162,-0.1759,0,0,1]]]],
   "fork.knife": [[117,24,1,1,0,[[1.0231,0.8525,0.0073,-0.0331,0.0218,0,1],[1.0419,0.865,-0.0209,-0.0481,0.0188,0,1],[1.0606,0.8525,-0.0068,-0.0462,0.027,0,1],[1.0869,0.875,-0.0059,-0.0143,0.0338,0,1],[1.1,0.8675,0.0091,-0.0265,0.0353,0,1]]]],
@@ -532,6 +534,7 @@ const ENCODED: Record<string, readonly EncodedLayer[]> = {
   "shield.lefthalf.filled": [[245,24,1,1,0,[[1.1012,1.015,0.0204,-0.0145,0,0,1],[1.1087,1,-0.0096,-0.0249,0,0,1],[1.1106,1.01,-0.0096,-0.0295,0.0127,0,1],[1.105,1.0075,-0.0068,-0.0324,0.0173,0,1],[1.1088,1.01,-0.0021,0.0014,0.024,0,1]]]],
   "shippingbox": [[246,24,0,1,0,[[1.1967,1.0225,-0.0122,-0.0108,0.0597,0,1],[1.191,1.0175,-0.0075,0.0164,0.0778,0,1],[1.191,1.0175,-0.0037,0.0127,0.0913,0,1],[1.1835,1.0175,0.0019,0.0089,0.1018,0,1],[1.1817,1.0175,0.0047,0.0052,0.1153,0,1]]]],
   "sidebar.left": [[247,32,0,1,0,[[1.3408,1,-0.0103,0.0009,0.0575,0,1],[1.3333,1,0,-0.0075,0.077,0,1],[1.3221,1,0.0075,-0.0131,0.0973,0,1],[1.309,0.995,0.0075,-0.0188,0.1123,0,1],[1.2958,0.995,0.0094,0.0131,0.128,0,1]]]],
+  "sidebar.right": [[247,32,0,1,0,[[1.3408,1,0.0103,0.0009,0.0575,0,-1],[1.3333,1,0,-0.0075,0.077,0,-1],[1.3221,1,-0.0075,-0.0131,0.0973,0,-1],[1.309,0.995,-0.0075,-0.0188,0.1123,0,-1],[1.2958,0.995,-0.0094,0.0131,0.128,0,-1]]]],
   "slider.horizontal.3": [[248,32,0,1,0,[[1.3315,0.9725,-0.0103,0,0.0522,0,1],[1.3333,0.9725,-0.0075,-0.0075,0.0672,0,1],[1.3708,0.9725,0.0047,0.015,0.0808,0,1],[1.4065,0.9925,0.0131,0.0066,0.0793,0,1],[1.3933,0.97,-0.0112,-0.0066,0.104,0,1]]]],
   "snowflake": [[249,24,0,1,0,[[1.0567,0.98,0.007,-0.0061,0.0538,0,1],[1.068,0.98,0.0145,-0.0117,0.068,0,1],[1.0792,0.9775,-0.0164,0.0183,0.0763,0,1],[1.0848,0.98,-0.0117,0.0145,0.083,0,1],[1.0961,0.98,-0.0023,0.007,0.0905,0,1]]]],
   "sparkles": [[250,24,0,1,0,[[0.8892,0.9725,-0.0401,0.0647,0.0935,0,1],[0.9192,0.9975,-0.0391,0.06,0.101,0,1],[0.9492,1.0575,-0.0391,0.0563,0.107,0,1],[0.9304,0.9575,-0.0569,0.0431,0.116,0,1],[0.9567,1.0075,-0.0579,0.0412,0.1235,0,1]]]],
@@ -718,6 +721,7 @@ const NUDGES: Record<string, string> = {
   "flag": "g9g8addbd9cdh9cdceeacdeahadek6dbfbeb79f9adbbd9edg9cdbdeaiedahajeaedbbbeb79f9addbdadd8addfeeaaedagaceafcbbbec79f9adcbd99dgacdfeeaaedagafeafdbacec",
   "flame": "8d7ca8cdeb97ca766599c578577a5a7554338c7ba7cc5a95c9756c984b775679587352398979b4c96792c67968934772507351735240b9a9d4fa88cb76a9a8d387c2a0d3c163d2c0",
   "folder": "fcbc79cf7cba8ecacb8gdc9f697dbecb8dadhcdcahff9dfabegahbefacehbhcejfbcgehd9cedahggbefjcfhcgdegadficjdfbhcehfhg9ada9efcabefbbgg8gdca8edbdca9abfgf9g",
+  "folder.fill": "fgbc79afcd89ce9bdf9bdgacadbecfcg5h5ahgecbhdffdcahedbigfcbggdheifkgdheigj9gecbhdffdcihfdbiffcbggdheifcgdheigj9gedbhdgfecihfdjagfcchgehfbgchdifjgk",
   "folder.badge.minus": "b989ddcceabf7bcfeeba7fbcabbg9gbd9dade9bagffchbffbahfiffccficfbagghbdiddeefbgfcf9gffbbf9bibefca9egfaahabehebfefbf8bf9iffbbf9babfeca9fheaah9ceiecd",
   "folder.badge.plus": "a979cebddabe6bbfdf9b6fbc9cbg7h9d7e8edabaffedgbefbbgfgffbbggcec9hfi9efeafdfagfbe9hfebbf8bibefbb8fff9afaaegeaedfaf7cdaffdbbf8b8begbc8fdf8bec9eef9f",
   "fork.knife": "chehimfjghclehhmgmjoemhojohmjogojogobgfghkfiggbkeghkglbodlgoiohoiogoiofocefdahffhdcgfkigggbjefhjciimblhojoiocefe9hff8lchfl9gggckeo9jbj9mbmgoaogo",
@@ -834,6 +838,7 @@ const NUDGES: Record<string, string> = {
   "shield.lefthalf.filled": "eaaadeaccaffabefdfgcbgfc9dghah9ebeaffaaadebcdbgfbbffeg9cdggcad9hchaedecffaaaeebcdb9fcbffefacdg9cbdahdhbeeedfffbfebc9ef9bdfgbfbbfebafcfbaeadefeed",
   "shippingbox": "ccgcc7adcbg6cahegdc9gcc8g7gac9ccgbgaccgcc7adcbgfcagdhdc9gcc8g7gad9cchbgacc8cc8adcb8eca7d7db98cc8778ac9cc8b8acc8cc7adcb8fca8d8dc88cc8878ac9cc8b8a",
   "sidebar.left": "9cecb99gbcf9ce99abefbcfgc9efbfccaebe9cdcbh9fbdf9be8a8befacfgbhdeafbc8cad9cecah8fbdfhce9a9bdfacfgchdebgcc9cae99e9ad8cbageca9e9eebb7fbdbe7c8cc9cbd",
+  "sidebar.right": "fcacd9fgdc99cef9ebafdc9gc9afdfcceedefcbcdhffdd99degagbafec9gdhbeefdcgcedfcacehgfdd9hcefafbbfec9gchbedgccfceef9a9edgcda8ecafefeabd79bbba7c8ccfcdd",
   "slider.horizontal.3": "cefecb9bcgfebaffffccfhbefffdbebcfcffbc7cb997bd7abe7a7bb87cb87977b7bc6666bc8cb99fbd8abf7b7bb87ba8797eb8ac6e6eecace9cffdbafebbbbgfccggd9deafacfcfe",
   "snowflake": "b9e9ed8b99de8abe7e6aaedacb7f5fcc7c6cdf9fhab8degacegababdf9adidd9d8ccfcfbef9e9ab8degacegac9bdf9bdadd8d8ccgbfbdf9f9ab8cegacefababdf9adadd8c8ccbbeb",
   "sparkles": "cdgdcgeegckfjbfejegakdkhkgjbnbnejdjcddhdcgfegcdflbhelehaldlhlglchboemdmdeeidehgfidfgfcjgnfkjofojoioemlmgogoffdjdfhhfjcgggckghgljhfojoiolologogon",

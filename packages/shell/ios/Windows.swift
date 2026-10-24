@@ -120,7 +120,6 @@ final class WindowManager: NSObject, NSWindowDelegate {
     windows[id] = window
     if lightsCenters[id] != nil { ChromeWindows.setTrafficLightsCenter(lightsCenter(id, in: window), in: window, animated: false) }
     if smallSize == nil { lastPlaced = window }
-    ChromeWindows.noteLightsAtOrder(in: window)
     if window.isMiniaturized {
       observeFrame(window)
       return reportFrame(window)
@@ -293,13 +292,6 @@ final class WindowManager: NSObject, NSWindowDelegate {
     ] {
       NotificationCenter.default.addObserver(self, selector: selector, name: name, object: window)
     }
-  }
-
-  func setProfile(id: String, profile: String, neighbours: [String]) {
-    if pendingOpens[id] != nil { pendingOpens[id]!.profile = profile }
-    guard let window = windows[id] else { return }
-    ChromeWindows.showProfile(profile, in: window)
-    if let current = windows[id] { ChromeWindows.prepare(neighbours, for: current) }
   }
 
   private var lightsCenters: [String: NSPoint] = [:]
@@ -1175,15 +1167,6 @@ final class DragPreview {
     guard shape != "hidden" else { return }
     shape = "hidden"
     panel?.orderOut(nil)
-  }
-
-  func debugWrite(dir: String) -> Bool {
-    var ok = false
-    for (name, image) in [("card", cardImage), ("pill", pillImage)] {
-      guard let image, let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else { continue }
-      ok = (try? png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("drag-\(name).png"))) != nil || ok
-    }
-    return ok
   }
 
   var debugState: [String: Any] {

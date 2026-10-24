@@ -41,7 +41,6 @@ NSValue *_Nullable ACTrafficLightsCenter(NSWindow *_Nullable window);
 @interface ACChromeWindowHost (Dev)
 
 + (nullable NSString *)devAction:(NSString *)action window:(NSWindow *)window;
-+ (void)noteLightsAtOrderIn:(NSWindow *)window;
 
 @end
 

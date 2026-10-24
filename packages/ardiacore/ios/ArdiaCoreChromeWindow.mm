@@ -1729,21 +1729,8 @@ NSDictionary *ProbeFrame(NSWindow *window, ACWindowFullScreen *state, CFTimeInte
 
 @implementation ACChromeWindowHost (Dev)
 
-static const void *kLightsAtOrderKey = &kLightsAtOrderKey;
-
-+ (void)noteLightsAtOrderIn:(NSWindow *)window {
-#if DEBUG
-  NSButton *close = [window standardWindowButton:NSWindowCloseButton];
-  if (!close || objc_getAssociatedObject(window, kLightsAtOrderKey)) return;
-  const NSRect r = [close convertRect:close.bounds toView:nil];
-  NSString *seen = [NSString stringWithFormat:@"%.2f,%.2f,%.2f,%.2f,%.2f", r.origin.x, r.origin.y, r.size.width, r.size.height, NSWidth(window.frame)];
-  objc_setAssociatedObject(window, kLightsAtOrderKey, seen, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-#endif
-}
-
 + (NSString *)devAction:(NSString *)action window:(NSWindow *)window {
   if (!window) return nil;
-  if ([action isEqualToString:@"lightsAtOrder"]) return objc_getAssociatedObject(window, kLightsAtOrderKey);
   if ([action hasPrefix:@"fakeFullScreenMs:"]) {
     if (!ardiacore_host::Background()) return @"test instances only";
     gActedTransition = MAX(0, [action substringFromIndex:17].doubleValue / 1000);
