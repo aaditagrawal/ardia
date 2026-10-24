@@ -80,6 +80,12 @@ else
 fi
 git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
 bun "$here/pr91-native-manifest.mjs" --pod-lock
+project=apps/browser/macos/Ardia.xcodeproj/project.pbxproj
+git diff -- "$project" > "$out/pods-project-rewrite.patch"
+cp "$project" "$out/project.pbxproj.pods"
+git show "HEAD:$project" > "$out/project.pbxproj.committed"
+cp "$out/project.pbxproj.committed" "$project"
+git diff --exit-code -- "$project"
 
 export ARDIA_CI_PHASE=engine
 export ARDIACORE_PREBUILT_REPO=mantrakp04/ardia

@@ -102,6 +102,7 @@ if (process.argv.includes('--relocate-pod-lock')) {
     bundledJavascript: existsSync(join(out, 'bundle-validation.json')) ? JSON.parse(readFileSync(join(out, 'bundle-validation.json'), 'utf8')) : null,
     javascriptBundleSHA256: version('main.jsbundle.sha256'),
     sourceSnapshot: existsSync(join(out, 'source-snapshot.json')) ? JSON.parse(readFileSync(join(out, 'source-snapshot.json'), 'utf8')) : null,
+    projectNormalization: existsSync(join(out, 'project.pbxproj.committed')) ? { reason: 'Restore committed app project after CocoaPods integration and before Xcode settings/compile', restoredBeforeCompile: true, committedSHA256: createHash('sha256').update(readFileSync(join(out, 'project.pbxproj.committed'))).digest('hex'), cocoaPodsGeneratedSHA256: createHash('sha256').update(readFileSync(join(out, 'project.pbxproj.pods'))).digest('hex'), diffFile: 'pods-project-rewrite.patch' } : null,
     ciPodLockNormalization: existsSync(join(out, 'pod-lock-normalization.json')) ? JSON.parse(readFileSync(join(out, 'pod-lock-normalization.json'), 'utf8')) : null,
     buildCommand: 'scripts/agent/build-app --as pr91-native --config Debug --force --wait 120',
     signingOverrides: version('ci-signing.xcconfig'),
